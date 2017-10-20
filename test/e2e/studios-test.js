@@ -55,7 +55,7 @@ describe('studio CRUD', () => {
                     saved = saved.map(item => item.body);
                     return request.get('/api/studios')
                         .then(res => {
-                            assert.deepEqual(res.body, saved);
+                            assert.deepEqual(res.body.sort(1), saved.sort(1));
                         });
                 });
         });
