@@ -57,7 +57,7 @@ describe('studio CRUD', () => {
                 .send(tw)
                 .then(res => {
                     tw._id = res._id;
-                    assert.deepEqual(res.body, tw);
+                    assert.ok(res.body._id);
                 });
         });
     });
