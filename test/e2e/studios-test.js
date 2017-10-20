@@ -42,14 +42,24 @@ describe('studio CRUD', () => {
         pm = new Studio(rawData[2]);
     });
 
-    // describe('get', () => {
-    //     it('retrieves all items in the database', () => {
-    //         return request.get('/api/studios')
-    //             .then(res => {
-    //                 assert.equal(res.body)
-    //             })
-    //     });
-    // }) ;
+    describe('get', () => {
+        it('retrieves all items in the database', () => {
+
+            const saveStudios = [
+                request.post('/api/studios').send(rawData[0]),
+                request.post('/api/studios').send(rawData[1]),
+                request.post('/api/studios').send(rawData[2])
+            ];
+            return Promise.all(saveStudios)
+                .then(saved => {
+                    saved = saved.map(item => item.body);
+                    return request.get('/api/studios')
+                        .then(res => {
+                            assert.deepEqual(res.body, saved);
+                        });
+                });
+        });
+    }) ;
 
     describe('post', () => {
         it('returns the saved object with _id', () => {
