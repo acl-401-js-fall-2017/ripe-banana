@@ -59,6 +59,17 @@ describe('studio CRUD', () => {
                         });
                 });
         });
+
+        it('retrieves an item by its id', () => {
+            return request.post('/api/studios')
+                .send(rawData[0])
+                .then(saved => {
+                    return request.get(`/api/studios/${saved.body._id}`)
+                        .then(gotten => {
+                            assert.deepEqual(gotten.body, saved.body);
+                        });
+                });
+        });
     }) ;
 
     describe('post', () => {
