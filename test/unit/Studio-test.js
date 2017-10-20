@@ -21,4 +21,10 @@ describe('Studio Model', () => {
         assert.ok(!ts.validateSync());
         assert.ok(ts.name);
     });
+
+    it('required fields are there', () => {
+        delete rawData.name;
+        const ts = new Studio(rawData);
+        assert.equal(ts.validateSync().errors.name.kind, 'required');
+    })
 });
