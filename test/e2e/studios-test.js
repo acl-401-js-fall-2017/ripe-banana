@@ -91,8 +91,8 @@ describe('studio CRUD', () => {
                 .send(tw)
                 .then(res => {
                     return request.del(`/api/studios/${res.body._id}`)
-                        .then(() => {
-                            assert.deepEqual(res.body, {removed: true});
+                        .then(deleted => {
+                            assert.deepEqual(deleted.body, {removed: true});
                         });
                 });
         });
