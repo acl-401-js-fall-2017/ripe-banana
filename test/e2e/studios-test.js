@@ -55,7 +55,9 @@ describe('studio CRUD', () => {
                     saved = saved.map(item => item.body);
                     return request.get('/api/studios')
                         .then(res => {
-                            assert.deepEqual(res.body.sort(1), saved.sort(1));
+                            assert.deepInclude(res.body, saved[0]);
+                            assert.deepInclude(res.body, saved[1]);
+                            assert.deepInclude(res.body, saved[2]);
                         });
                 });
         });
@@ -79,6 +81,19 @@ describe('studio CRUD', () => {
                 .then(res => {
                     tw._id = res._id;
                     assert.ok(res.body._id);
+                });
+        });
+    });
+
+    describe('delete', () => {
+        it('deletes the saved object with _id', () => {
+            return request.post('/api/studios')
+                .send(tw)
+                .then(res => {
+                    return request.del(`/api/studios/${res.body._id}`)
+                        .then(() => {
+                            assert.deepEqual(res.body, {removed: true});
+                        });
                 });
         });
     });
