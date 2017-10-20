@@ -26,5 +26,5 @@ describe('Studio Model', () => {
         delete rawData.name;
         const ts = new Studio(rawData);
         assert.equal(ts.validateSync().errors.name.kind, 'required');
-    })
+    });
 });
