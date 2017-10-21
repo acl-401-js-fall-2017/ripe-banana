@@ -45,9 +45,9 @@ describe('studio CRUD', () => {
         it('retrieves all items in the database', () => {
 
             const saveStudios = [
-                request.post('/api/studios').send(rawData[0]),
-                request.post('/api/studios').send(rawData[1]),
-                request.post('/api/studios').send(rawData[2])
+                request.post('/api/studios').send(ts),
+                request.post('/api/studios').send(tw),
+                request.post('/api/studios').send(pm)
             ];
             return Promise.all(saveStudios)
                 .then(saved => {
