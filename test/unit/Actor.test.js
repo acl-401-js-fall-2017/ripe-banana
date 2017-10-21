@@ -16,4 +16,12 @@ describe('Actor Model', () => {
         assert.ok(!steve.validateSync());
         assert.ok(steve.name);
     });
+
+    it('required fields present', () => {
+        delete rawData.name;
+        const steve = new Actor(rawData);
+
+        assert.equal(steve.validateSync().errors.name.kind, 'required');
+
+    });
 });
