@@ -11,7 +11,16 @@ describe('Reviewer model', () => {
 
     it('valid model', () => {
         const mel = new Reviewer(rawData);
+        
         assert.ok(!mel.validateSync());
         assert.ok(mel.name);
+    });
+
+    it('required fields included', () => {
+        delete rawData.name;
+        const mel = new Reviewer(rawData);
+
+        assert.equal(mel.validateSync().errors.name.kind, 'required');
+
     });
 });
