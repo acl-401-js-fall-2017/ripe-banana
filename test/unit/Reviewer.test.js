@@ -21,6 +21,5 @@ describe('Reviewer model', () => {
         const mel = new Reviewer(rawData);
 
         assert.equal(mel.validateSync().errors.name.kind, 'required');
-
     });
 });
