@@ -61,4 +61,16 @@ describe('Reviewer CRUD', () => {
                 });
         });
     });
+    describe('DELETE Reviewer', () => {
+        it('given a valid id returns true', () => {
+            return request.post('/api/reviewers')
+                .send(rawData[0])
+                .then( res => {
+                    return request.del(`/api/reviewers/${res.body._id}`)
+                        .then(({body: status}) => {
+                            assert.deepEqual(status, {removed: true});
+                        });
+                });
+        });
+    });
 });
