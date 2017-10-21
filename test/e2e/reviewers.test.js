@@ -26,4 +26,29 @@ describe('Reviewer CRUD', () => {
                 .then( res => assert.ok(res.body._id));
         });
     });
+    describe('GET Reviewer', () => {
+        it('returns all with no given id', () => {
+            const saveAll = [
+                request.post('/api/reviewers')
+                    .send(rawData[0]),
+                request.post('/api/reviewers')
+                    .send(rawData[1])
+            ];
+
+            return Promise.all(saveAll)
+                .then(resArray => {
+                    resArray = resArray.map(res => {
+                        return {
+                            name: res.body.name,
+                            _id: res.body._id
+                        };
+                    });
+                    return request.get('/api/reviewers')
+                        .then(gotten => {
+                            assert.deepInclude(gotten.body, resArray[0]);
+                            assert.deepInclude(gotten.body, resArray[1]);
+                        });
+                });
+        });
+    });
 });
