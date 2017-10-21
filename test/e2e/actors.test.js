@@ -28,9 +28,30 @@ describe('actor CRUD', () => {
         });
     });
 
-    // describe('GET Actor', () => {
-    //     it('returns all when no id', () => {
-    //         return request.
-    //     })
-    // })
+    describe('GET Actor', () => {
+        it('returns all when no id', () => {
+            const saveAll = [
+                request.post('/api/actors')
+                    .send(rawData[0]),
+                request.post('/api/actors')
+                    .send(rawData[1])
+            ];
+
+            return Promise.all(saveAll)                
+                .then(resArray => {
+                    resArray = resArray.map((res) => {
+                        return {
+                            name: res.body.name,
+                            _id: res.body._id
+                        };
+                    });
+                    return request.get('/api/actors')
+                        .then(gotten => {
+                            assert.deepInclude(gotten, resArray[0]);
+                            assert.deepInclude(gotten, resArray[1]);
+                        });
+                });
+                
+        });
+    });
 });
