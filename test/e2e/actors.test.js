@@ -47,8 +47,8 @@ describe('actor CRUD', () => {
                     });
                     return request.get('/api/actors')
                         .then(gotten => {
-                            assert.deepInclude(gotten, resArray[0]);
-                            assert.deepInclude(gotten, resArray[1]);
+                            assert.deepInclude(gotten.body, resArray[0]);
+                            assert.deepInclude(gotten.body, resArray[1]);
                         });
                 });
                 
