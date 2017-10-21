@@ -51,12 +51,12 @@ describe('Reviewer CRUD', () => {
                 });
         });
         it('returns reviewer by id', () => {
-            return request.post('/api/reviewer')
-                .send(rawData[1])
+            return request.post('/api/reviewers')
+                .send(rawData[0])
                 .then(res => {
                     const saved = res.body;
                     delete saved.__v;
-                    return request.get(`/api.reviewer/${saved._id}`)
+                    return request.get(`/api/reviewers/${saved._id}`)
                         .then(getRes => assert.deepEqual(getRes.body, saved));     
                 });
         });
