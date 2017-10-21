@@ -66,5 +66,17 @@ describe('actor CRUD', () => {
                 });
 
         });
+
+    });
+    
+    describe('DELETE Actor', () => {
+        it('given a valid id returns removed true', () => {
+            return request.post('/api/actors')
+                .send(rawData[1])
+                .then(res => {
+                    return request.del(`/api/actors/${res.body._id}`)
+                        .then(({body: status}) => assert.deepEqual(status, {removed: true}));
+                });
+        });
     });
 });
