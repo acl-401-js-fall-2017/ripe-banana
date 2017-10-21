@@ -52,7 +52,12 @@ describe('studio CRUD', () => {
             ];
             return Promise.all(saveStudios)
                 .then(saved => {
-                    saved = saved.map(item => item.body);
+                    saved = saved.map(item => {
+                        return {
+                            name: item.body.name,
+                            _id: item.body._id
+                        };
+                    });
                     return request.get('/api/studios')
                         .then(res => {
                             assert.deepInclude(res.body, saved[0]);
