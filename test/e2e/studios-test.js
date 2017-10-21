@@ -1,7 +1,6 @@
 const {assert} = require('chai');
 const mongoose = require('mongoose').connection;
 const request = require('./request');
-const Studio = require('../../lib/models/Studio');
 
 describe('studio CRUD', () => {
 
@@ -37,9 +36,9 @@ describe('studio CRUD', () => {
     beforeEach(() => {
         mongoose.dropDatabase();
 
-        ts = new Studio(rawData[0]);
-        tw = new Studio(rawData[1]);
-        pm = new Studio(rawData[2]);
+        ts = rawData[0];
+        tw = rawData[1];
+        pm = rawData[2];
     });
 
     describe('get', () => {
@@ -52,7 +51,12 @@ describe('studio CRUD', () => {
             ];
             return Promise.all(saveStudios)
                 .then(saved => {
-                    saved = saved.map(item => item.body);
+                    saved = saved.map(item => {
+                        return {
+                            name: item.body.name,
+                            _id: item.body._id
+                        };
+                    });
                     return request.get('/api/studios')
                         .then(res => {
                             assert.deepInclude(res.body, saved[0]);
