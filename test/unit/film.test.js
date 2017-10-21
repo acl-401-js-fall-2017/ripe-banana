@@ -1,5 +1,5 @@
 const assert = require('chai').assert;
-const Film = require('../../lib/models/films');
+const Film = require('../../lib/models/film');
 
 describe('film model', () => {
     
