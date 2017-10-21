@@ -58,9 +58,10 @@ describe('actor CRUD', () => {
                 .send(rawData[1])
                 .then(res => {
                     const saved = res.body;
+                    delete saved.__v;
                     return request.get(`/api/actors/${saved._id}`)
                         .then(getRes => {
-                            assert.equal(getRes.body, saved);
+                            assert.deepEqual(getRes.body, saved);
                         });
                 });
 
