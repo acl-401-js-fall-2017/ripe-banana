@@ -14,11 +14,16 @@ describe('films API', ()=> {
     };
 
     const frozen = {
-        name: 'frozen'
+        name: 'frozen',
+        studio: 'fox',
+        released: 2015
     };
     const juno = {
-        name: 'juno'
+        name: 'juno', 
+        studio: 'warner',
+        released: 2002
     };
+    let titanic = { title: 'Titanic', studio: 'fox', released: 1998 };    
 
     before(() => {
         return request.post('/api/studios')
@@ -46,30 +51,15 @@ describe('films API', ()=> {
             .then(films => assert.deepEqual(films, []));
     });
 
-    let titanic = { title: 'Titanic', studio: '590643bc2cd3da2808b0e651', released: 1998 };    
-
-    it('Gets all studios', () =>{
-        const saves = [ frozen, juno].map(film =>{
-            return request.post('/api/films')
-                .send(film)
-                .then(res => res.body);
-        });
-        let saved = null;
-        let savedNames = null;
-        return Promise.all(saves)
-            .then(_saved => {
-                saved = _saved;
-                savedNames = saved.map( save => { 
-                    return {
-                        _id: save._id,
-                        name: save.name,
-                        studio: save.studio
-                    }; 
-                });
-                return request.get('/api/studios');
-            })
-            .then(res =>{
-                assert.deepEqual(res.body, savedNames);
+    
+    it('GET by id should return title and studio fields', () => {
+    
+        return request.get(`/api/films/${titanic._id}`)
+            .then(res => res.body)
+            .then(film => {
+                assert.propertyVal(film, 'title', 'juno');
+                assert.propertyVal(film.studio, 'name', 'fox');
             });
     });
+    
 });

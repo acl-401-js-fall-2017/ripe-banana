@@ -12,7 +12,7 @@ describe('studios API', () => {
         name: 'Fox'
     };
 
-    it('saves a studio with ID', () => {
+    it('Post saves a studio with ID', () => {
         return request.post('/api/studios')
             .send(warner)
             .then(res => {

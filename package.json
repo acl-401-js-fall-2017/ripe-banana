@@ -6,11 +6,9 @@
   "scripts": {
     "test": "npm run mocha",
     "mocha": "mocha --recursive",
-    "test:dev": "nodemon --exec 'npm run mocha'",
-    "test:unit": "nodemon --exec 'npm run mocha -- ./test/unit'",
-    "test:e2e": "nodemon --exec 'npm run mocha -- ./test/e2e'",
-    "start": "node server.js",
-    "start:dev": "nodemon server.js"
+    
+    "start": "node server.js"
+    
   },
   "repository": {
     "type": "git",
