@@ -53,5 +53,17 @@ describe('actor CRUD', () => {
                 });
                 
         });
+        it('get actor by id', () => {
+            return request.post('/api/actors')
+                .send(rawData[1])
+                .then(res => {
+                    const saved = res.body;
+                    return request.get(`/api/actors/${saved._id}`)
+                        .then(getRes => {
+                            assert.equal(getRes.body, saved);
+                        });
+                });
+
+        });
     });
 });
