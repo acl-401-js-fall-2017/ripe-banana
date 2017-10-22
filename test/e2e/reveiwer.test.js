@@ -46,11 +46,29 @@ describe('reviewer API', () => {
                 return request.get('/api/reviewers');
             })
             .then(res =>{
-                console.log('IAMRESBODY',res.body)
                 assert.deepEqual(res.body, savedNames);
             });
     });
 
+    it('Shoud get a reviewer by id', ()=>{
+        let reviewer;
+        let id;
 
-})
+        return request.post('/api/reviewers')
+            .send(kateTaylor)
+            .then(res => {
+                reviewer = res.body;
+                id = reviewer._id;
+            })
+            .then(()=>{
+                return request.get(`/api/reviewers/${id}`)
+                    .then(res =>{
+                        assert.deepEqual(res.body, {_id: id, name: reviewer.name});
+                    });
+            });
+
+    });
+
+
+});
 
