@@ -27,7 +27,7 @@ describe('reviewer API', () => {
     });
 
     it('Gets all reviewers', () =>{
-        const saves = [kateTaylor, jamesBerardinelli].map(reviewer =>{
+        const saves = [jamesBerardinelli, kateTaylor].map(reviewer =>{
             return request.post('/api/reviewers')
                 .send(reviewer)
                 .then(res => res.body);
@@ -39,13 +39,14 @@ describe('reviewer API', () => {
                 saved = _saved;
                 savedNames = saved.map( save => {
                     return {
-                        _id: save.id,
+                        _id: save._id,
                         name: save.name
                     };
                 });
                 return request.get('/api/reviewers');
             })
             .then(res =>{
+                console.log('IAMRESBODY',res.body)
                 assert.deepEqual(res.body, savedNames);
             });
     });
