@@ -18,8 +18,8 @@ describe('reviewer API', () => {
                 const reviewer = res.body;
                 assert.ok(reviewer._id);
                 assert.equal(reviewer.name, kateTaylor.name);
-            })
-    })
+            });
+    });
 
 
 })
