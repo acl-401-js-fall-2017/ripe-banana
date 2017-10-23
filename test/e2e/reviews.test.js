@@ -32,7 +32,7 @@ describe('review API', () => {
             .then(res => {
                 const review = res.body;
                 assert.ok(review._id);
-                assert.equal(review.reviewer, testReview.name);
+                assert.equal(review.reviewer, testReview.reviewer);
             });
     });
 
