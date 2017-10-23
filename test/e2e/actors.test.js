@@ -56,15 +56,56 @@ describe('actor CRUD', () => {
         it('get actor by id', () => {
             return request.post('/api/actors')
                 .send(rawData[1])
-                .then(res => {
-                    const saved = res.body;
+                .then(({body: saved}) => {
+
                     delete saved.__v;
-                    return request.get(`/api/actors/${saved._id}`)
-                        .then(getRes => {
-                            assert.deepEqual(getRes.body, saved);
+                    const tokenID = '59eda47c92868f6ce8df7b23';
+                    const filmData = [
+                        {
+                            title: 'Halloween',
+                            studio: tokenID,
+                            released: 2000,
+                            cast: [
+                                {
+                                    part: 'damsel in distress',
+                                    actor: saved._id
+                                },
+                                {
+                                    part: 'lead',
+                                    actor: tokenID
+                                }
+                            ]
+                        },
+                        {
+                            title: 'Blade Runner',
+                            studio: tokenID,
+                            released: 2017,
+                            cast: [
+                                {
+                                    part: 'android',
+                                    actor: tokenID
+                                },
+                                {
+                                    part: 'human',
+                                    actor: saved._id
+                                }
+                            ]
+                        }
+                    ];
+                    const saveFilms = [
+                        request.post('/api/films').send(filmData[0]),
+                        request.post('/api/films').send(filmData[1])
+                    ];
+                    return Promise.all(saveFilms)
+                        .then(filmRes => {
+
+                            saved.films = filmRes.map(film => ({title: film.body.title, released: film.body.released}));
+                            return request.get(`/api/actors/${saved._id}`)
+                                .then(getRes => {
+                                    assert.deepEqual(getRes.body, saved);
+                                });
                         });
                 });
-
         });
 
     });
