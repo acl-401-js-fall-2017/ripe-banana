@@ -109,6 +109,8 @@ describe('films router', () => {
                     .then(res => {
                         const saved = res.body;
                         filmData[0]._id = saved._id;
+                        filmData[0].__v = 0;
+                        
                         assert.deepEqual(saved, filmData[0]);
                         assert.ok(saved !== filmData[0]);
                     })
