@@ -171,11 +171,71 @@ describe('films router', () => {
                                 if(castMember.actor === actor._id) castMember.actor = actor.name;
                             });
                         });
+                        const reviewerData = [
+                            {
+                                name: 'Ted',
+                                company: 'GitHub'
+                            },
+                            {
+                                name: 'Mosbee',
+                                company: 'Starbucks'
+                            }
+                        ];
+                        const reviewerDataSaved = [
+                            request.post('/api/reviewers')
+                                .send(reviewerData[0]),
+                            request.post('/api/reviewers')
+                                .send(reviewerData[1])
+                        ];
+                        
+                        return Promise.all(reviewerDataSaved)
+                            .then(reviewerRes => {
+                                const reviewers = reviewerRes.map(r => r.body);
+                                const reviewData = [
+                                    {
+                                        rating: 4,
+                                        reviewer: reviewers[0]._id,
+                                        review: 'fbdlfkdsjfsdfkcmncmxncmxnmcnmxcnc',
+                                        film: saved._id
+                                    },
+                                    {
+                                        rating: 2,
+                                        reviewer: reviewers[1]._id,
+                                        review: 'fasasasasasaasaasasasasasassa',
+                                        film: saved._id
+                                    }
+                                ];
+                                const reviewSend = [
+                                    request.post('/api/reviews')
+                                        .send(reviewData[0]),
+                                    request.post('/api/reviews')
+                                        .send(reviewData[1])
+                                ];
 
-                        return request.get(`/api/films/${saved._id}`)
-                            .then(getRes => {
-                                assert.deepEqual(saved, getRes.body);
+                                return Promise.all(reviewSend)
+                                    .then(reviewRes => {
+                                        const reviews = reviewRes.map(r => r.body);
+                                        saved.reviews = [
+                                            {
+                                                rating: 4,
+                                                reviewer: 'Ted',
+                                                review: 'fbdlfkdsjfsdfkcmncmxncmxnmcnmxcnc'
+                                            },
+                                            {
+                                                rating: 2,
+                                                reviewer: 'Mosbee',
+                                                review: 'fasasasasasaasaasasasasasassa'
+                                            }
+                                        ];
+                                        return request.get(`/api/films/${saved._id}`)
+                                            .then(getRes => {
+                                                assert.deepEqual(saved, getRes.body);
+
+                                            });
+                                    });
+
                             });
+
                     });
             });
         });
