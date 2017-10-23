@@ -13,6 +13,7 @@ describe('films API', ()=> {
     };
 
     let titanic = null;
+    let juno = null;
 
     beforeEach(() => {
         mongoose.connection.dropDatabase();
@@ -27,7 +28,13 @@ describe('films API', ()=> {
                 titanic = { 
                     title: 'Titanic', 
                     studio: studio._id, 
-                    released: 1998 };    
+                    released: 1998 };  
+
+                juno = {
+                    title: 'juno', 
+                    studio: studio._id,
+                    released: 2002
+                };
             });
     });
 
@@ -36,11 +43,6 @@ describe('films API', ()=> {
         title: 'frozen',
         studio: 'fox',
         released: 2015
-    };
-    const juno = {
-        title: 'juno', 
-        studio: 'warner',
-        released: 2002
     };
 
 
@@ -57,14 +59,8 @@ describe('films API', ()=> {
             
     });
 
-    it('first GET should return empty array', () => {
-        return request.get('/api/films')
-            .then(res => res.body)
-            .then(films => assert.deepEqual(films, []));
-    });
-
     
-    it.only('GET by id should return title and studio fields', () => {
+    it('GET by id should return title and studio fields', () => {
         return request.post('/api/films')
             .send(titanic)
             .then(film => {
@@ -79,5 +75,33 @@ describe('films API', ()=> {
                 
             });
     });
+
+    it.only('GETS all films', () => {
+        const saves = [titanic, juno].map( savedFilm => {
+            return request.post('/api/films')
+                .send(savedFilm)
+                .then(res => res.body);
+        });
+
+        let saved = null;
+
+        return Promise.all(saves)
+            .then(_saved => {
+                saved = _saved;
+                savedData = saved.map(save => {
+                    return {
+                        _id: save._id,
+                        title: save.title
+                    };
+                });
+                return request.get('/api/films');
+            })
+            .then(res => {
+                let sortedSavedData = savedData.sort((a,b) => a._id < b._id);
+                assert.deepEqual(res.body, sortedSavedData);
+            });
+
+    });
+
     
 });
