@@ -52,10 +52,16 @@ describe('Film model', () => {
     it('invalidates film without a valid 4 digit year', () => {
 
         rawData.released = 19887;
-        const newMov2 = new Film(rawData);
-        assert.ok(newMov2._id);
-        assert.equal(newMov2.validateSync().errors.released.message, 'not a 4 digit year');
+        const newMov = new Film(rawData);
+        assert.ok(newMov._id);
+        assert.equal(newMov.validateSync().errors.released.message, 'not a 4 digit year');
     });
-
     
+    it('invalidates film with cast missing actor', () => {
+        delete rawData.cast[0].actor;
+        const newMov = new Film(rawData);
+        assert.ok(newMov._id);
+        const test = newMov.validateSync().errors;
+        assert.equal(newMov.validateSync().errors['cast.0.actor'].kind, 'required');
+    });  
 });
