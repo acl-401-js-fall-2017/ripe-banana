@@ -154,19 +154,21 @@ describe('films router', () => {
             })
         });
 
-        // describe('get by id', () => {   // TODO: also get review stuff
-        //     it('retrieves the title, released date, studio name, cast( including actor\'s name and role', () => {
-        //         return request.post('/api/films')
-        //             .send(filmData[1])
-        //             .then(postRes => {
-        //                 const saved = postRes.body;
-        //                 return request.get('/api/films')
-        //                     .then(getRes => {
+        describe.only('get by id', () => {   // TODO: also get review stuff
+            it('retrieves the title, released date, studio name, cast( including actor\'s name and role', () => {
+                return request.post('/api/films')
+                    .send(filmData[1])
+                    .then(postRes => {
+                        const saved = postRes.body;
+                        delete saved.__v;
 
-        //                     })
-        //             })
-        //     })
-        // });
+                        return request.get(`/api/films${saved._id}`)
+                            .then(getRes => {
+                                assert.deepEqual(saved, getRes.body);
+                            })
+                    })
+            })
+        });
     });
 
 });
