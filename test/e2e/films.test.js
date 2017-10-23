@@ -99,7 +99,7 @@ describe('films router', () => {
                             }
                         ]
                     }
-                ]
+                ];
             });
     });
 
@@ -115,7 +115,7 @@ describe('films router', () => {
 
                         assert.deepEqual(saved, filmData[0]);
                         assert.ok(saved !== filmData[0]);
-                    })
+                    });
             });
         });
 
@@ -150,10 +150,10 @@ describe('films router', () => {
 
                                 expected.forEach(studio => {
                                     assert.deepInclude(allStudios, studio);
-                                })
-                            })
-                    })
-            })
+                                });
+                            });
+                    });
+            });
         });
 
         describe('get by id', () => {   // TODO: also get review stuff
@@ -170,14 +170,14 @@ describe('films router', () => {
                             actors.forEach(actor => {
                                 if(castMember.actor === actor._id) castMember.actor = actor.name;
                             });
-                        })
+                        });
 
                         return request.get(`/api/films/${saved._id}`)
                             .then(getRes => {
                                 assert.deepEqual(saved, getRes.body);
-                            })
-                    })
-            })
+                            });
+                    });
+            });
         });
 
         describe('delete', () => {
