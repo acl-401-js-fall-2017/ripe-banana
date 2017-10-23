@@ -8,30 +8,15 @@
             "type": "node",
             "request": "launch",
             "name": "Mocha Tests",
-            "program": "${workspaceFolder}/node_modules/mocha/bin/_mocha",
+            "program": "${workspaceRoot}/node_modules/mocha/bin/_mocha",
             "args": [
+                "--recursive",
                 "-u",
                 "tdd",
                 "--timeout",
                 "999999",
                 "--colors",
-                "${workspaceFolder}/test",
-                "--recursive"
-            ],
-            "internalConsoleOptions": "openOnSessionStart"
-        },
-        {
-            "type": "node",
-            "request": "launch",
-            "name": "Mocha Tests",
-            "program": "${workspaceFolder}/node_modules/mocha/bin/_mocha",
-            "args": [
-                "-u",
-                "tdd",
-                "--timeout",
-                "999999",
-                "--colors",
-                "${workspaceFolder}/test"
+                "${workspaceRoot}/test"
             ],
             "internalConsoleOptions": "openOnSessionStart"
         },

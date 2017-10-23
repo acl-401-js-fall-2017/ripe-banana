@@ -6,9 +6,9 @@
   "scripts": {
     "lint": "eslint .",
     "pretest": "npm run lint",
-    "test": "npm run mocha",
     "mocha": "mocha --recursive",
-    "test:dev": "nodemon --exec 'npm run mocha'",
+    "test": "npm run mocha",
+    "test:dev": "nodemon --exec \"npm run mocha\"",
     "test:unit": "nodemon --exec 'npm run mocha -- ./test/unit'",
     "test:e2e": "nodemon --exec 'npm run mocha -- ./test/e2e'",
     "start": "node server.js",
