@@ -62,8 +62,10 @@ describe('films router', () => {
         
         return Promise.all(saveAllPromises)
             .then(res => {
+
                 studios = res.slice(0, studioData.length).map(r => r.body);
                 actors = res.slice( -actorData.length).map(r => r.body);
+
                 filmData = [
                     {
                         title: 'Halloween',
@@ -102,7 +104,14 @@ describe('films router', () => {
     describe('CRUD', () => {
         describe('post', () => {
             it('returns the saved object with its new mongo id', () => {
-                assert.ok(0);
+                return request.post('/api/films')
+                    .send(filmData[0])
+                    .then(res => {
+                        const saved = res.body;
+                        filmData[0]._id = saved._id;
+                        assert.deepEqual(saved, filmData[0]);
+                        assert.ok(saved !== filmData[0]);
+                    })
             });
         });
     });
