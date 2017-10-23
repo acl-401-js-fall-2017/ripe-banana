@@ -137,6 +137,7 @@ describe('films router', () => {
 
                             // remove irrelevant data
                             delete film.cast;
+                            delete film.__v;
 
                             return film;
                         });
