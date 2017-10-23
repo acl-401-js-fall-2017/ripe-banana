@@ -45,7 +45,9 @@ describe('films router', () => {
 
             },
             {
-                name: 'Oprah'
+                name: 'Oprah',
+                dob: new Date('1954-1-29'),
+                pob: 'Kosciusco, MS'
             },
             {
                 name: 'Tom Cruise',
@@ -160,9 +162,17 @@ describe('films router', () => {
                     .send(filmData[1])
                     .then(postRes => {
                         const saved = postRes.body;
-                        delete saved.__v;
 
-                        return request.get(`/api/films${saved._id}`)
+                        studios.forEach(studio => {
+                            if(saved.studio === studio._id) saved.studio = studio.name;
+                        });
+                        saved.cast.forEach(castMember => {
+                            actors.forEach(actor => {
+                                if(castMember.actor === actor._id) castMember.actor = actor.name;
+                            });
+                        })
+
+                        return request.get(`/api/films/${saved._id}`)
                             .then(getRes => {
                                 assert.deepEqual(saved, getRes.body);
                             })
