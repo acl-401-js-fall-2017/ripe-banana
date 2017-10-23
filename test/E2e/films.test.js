@@ -45,7 +45,7 @@ describe('films API', ()=> {
 
 
 
-    it.only('POST should add a film', () => {
+    it('POST should add a film', () => {
         
         return request.post('/api/films')
             .send(titanic)
@@ -64,13 +64,19 @@ describe('films API', ()=> {
     });
 
     
-    it('GET by id should return title and studio fields', () => {
-    
-        return request.get(`/api/films/${titanic._id}`)
-            .then(res => res.body)
+    it.only('GET by id should return title and studio fields', () => {
+        return request.post('/api/films')
+            .send(titanic)
             .then(film => {
-                assert.propertyVal(film, 'title', 'juno');
-                assert.propertyVal(film.studio, 'name', 'fox');
+                film = film.body;
+                console.log('%%%%%%%%%%%%%%%%%%%%%%', film);
+                return request.get(`/api/films/${film._id}`)
+                    .then(res => res.body)
+                    .then(film => {
+                        assert.propertyVal(film, 'title', 'Titanic');
+                        assert.propertyVal(film.studio, 'name', 'Warner');
+                    });
+                
             });
     });
     
