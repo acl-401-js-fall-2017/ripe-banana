@@ -180,7 +180,7 @@ describe('films router', () => {
             })
         });
 
-        describe('delete', () => {
+        describe.only('delete', () => {
             it('removes the film with the given id from the collection', () => {
 
                 return request.post('/api/films')
@@ -190,12 +190,7 @@ describe('films router', () => {
                         return request.del(`/api/films/${saved._id}`)
                             .then(({body: status}) => {
                                 assert.deepEqual(status, {removed: true});
-
-                                return request.get(`/api/films/${saved._id}`)
-                                    .then(({body: getRes}) => {
-                                        assert.deepEqual(getRes, null);
-                                    })
-                            })
+                            });
                     });
             });
         });
