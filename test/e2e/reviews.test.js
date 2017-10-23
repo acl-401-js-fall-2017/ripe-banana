@@ -179,4 +179,20 @@ describe('Reviews CRUD', () => {
                 });
         });
     });
+    describe('Reviews PATCH', () => {
+        it('Patch a review and returns it', () => {
+            return request.post('/api/reviews')
+                .send(reviewData[0])
+                .then(({body: revRes}) => {
+                    assert.ok(revRes._id);
+                    revRes.rating = 2;
+                    return request.patch(`/api/reviews/${revRes._id}`)
+                        .send({rating: 2})
+                        .then(({body: updateRes}) => {
+                            assert.deepEqual(revRes, updateRes);
+                        });
+                });
+            
+        });
+    });
 });
