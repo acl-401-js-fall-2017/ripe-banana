@@ -99,6 +99,25 @@ describe('reviewer API', () => {
 
     });
 
+    it('updates a reviewer', () => {
+       
+        let savedReviewer = null;
+
+        return request.post('/api/reviewers')
+            .send(kateTaylor)
+            .then(res => savedReviewer = res.body)
+            .then(() => {
+                kateTaylor.name = 'SAM';
+                return request
+                    .put(`/api/reviewers/${savedReviewer._id}`)
+                    .send( kateTaylor );
+            })
+            .then( res => {
+                assert.deepEqual(res.body.nModified === 1, true);
+            });
+
+    });
+
 
 });
 
