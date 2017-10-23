@@ -110,12 +110,62 @@ describe('films router', () => {
                         const saved = res.body;
                         filmData[0]._id = saved._id;
                         filmData[0].__v = 0;
-                        
+
                         assert.deepEqual(saved, filmData[0]);
                         assert.ok(saved !== filmData[0]);
                     })
             });
         });
+
+        describe('get all', () => {
+            it('retrieves an array holding the title, date released, and studio name of all films', () => {
+                const saveAll = filmData.map(film => {
+                    return request.post('/api/films').send(film);
+                });
+
+                return Promise.all(saveAll)
+                    .then(postRes => {
+                        const saved = postRes.map(res => res.body);
+
+                        // set up expected array
+                        const expected = saved.map(film => {
+
+                            // replace studio id with its name
+                            studios.forEach(studioInDB => {
+                                if(studioInDB._id === film.studio) film.studio = studioInDB.name;
+                            });
+
+                            // remove irrelevant data
+                            delete film.cast;
+
+                            return film;
+                        });
+
+                        return request.get('/api/films')
+                            .then(getRes => {
+                                const allStudios = getRes.body;
+
+                                expected.forEach(studio => {
+                                    assert.deepInclude(allStudios, studio);
+                                })
+                            })
+                    })
+            })
+        });
+
+        // describe('get by id', () => {   // TODO: also get review stuff
+        //     it('retrieves the title, released date, studio name, cast( including actor\'s name and role', () => {
+        //         return request.post('/api/films')
+        //             .send(filmData[1])
+        //             .then(postRes => {
+        //                 const saved = postRes.body;
+        //                 return request.get('/api/films')
+        //                     .then(getRes => {
+
+        //                     })
+        //             })
+        //     })
+        // });
     });
 
 });
