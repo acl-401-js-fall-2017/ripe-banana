@@ -213,8 +213,7 @@ describe('films router', () => {
                                 ];
 
                                 return Promise.all(reviewSend)
-                                    .then(reviewRes => {
-                                        const reviews = reviewRes.map(r => r.body);
+                                    .then(() => {
                                         saved.reviews = [
                                             {
                                                 rating: 4,
