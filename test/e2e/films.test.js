@@ -156,7 +156,7 @@ describe('films router', () => {
             })
         });
 
-        describe.only('get by id', () => {   // TODO: also get review stuff
+        describe('get by id', () => {   // TODO: also get review stuff
             it('retrieves the title, released date, studio name, cast( including actor\'s name and role', () => {
                 return request.post('/api/films')
                     .send(filmData[1])
@@ -179,6 +179,25 @@ describe('films router', () => {
                     })
             })
         });
-    });
 
+        describe('delete', () => {
+            it('removes the film with the given id from the collection', () => {
+
+                return request.post('/api/films')
+                    .send(filmData[0])
+                    .then(({body: saved}) => {
+
+                        return request.del(`/api/films/${saved._id}`)
+                            .then(({body: status}) => {
+                                assert.deepEqual(status, {removed: true});
+
+                                return request.get(`/api/films/${saved._id}`)
+                                    .then(({body: getRes}) => {
+                                        assert.deepEqual(getRes, null);
+                                    })
+                            })
+                    });
+            });
+        });
+    });
 });
