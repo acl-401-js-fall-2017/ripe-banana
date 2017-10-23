@@ -127,6 +127,28 @@ describe('films API', ()=> {
             });
     });
 
+    it('deletes film by ID', () => {
+        let film = null;
+        return request.post('/api/films')
+            .send(titanic)
+            .then(res => {
+                film = res.body;
+                return request.delete(`/api/films/${film._id}`);
+            })
+            .then( res => {
+                assert.deepEqual(res.body, {removed: true});
+                return request.get(`/api/films/${film._id}`);
+            })
+            .then(
+                () => { throw new Error('Unexpected successful response');},
+                err => {
+                    assert.equal(err.status, 404);
+                }
+            );
+    });
+
+
+
 
     
 });
