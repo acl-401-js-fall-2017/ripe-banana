@@ -65,7 +65,7 @@ describe('films API', ()=> {
             .send(titanic)
             .then(film => {
                 film = film.body;
-                console.log('%%%%%%%%%%%%%%%%%%%%%%', film);
+                
                 return request.get(`/api/films/${film._id}`)
                     .then(res => res.body)
                     .then(film => {
@@ -140,15 +140,13 @@ describe('films API', ()=> {
                 return request.get(`/api/films/${film._id}`);
             })
             .then(
-                () => { throw new Error('Unexpected successful response');},
+                
+                (data) => { console.log('%%%%%%%%%%%%%%%%%%%%%%', data.body);
+                    throw new Error('Unexpected successful response');},
                 err => {
                     assert.equal(err.status, 404);
                 }
             );
     });
-
-
-
-
     
 });
