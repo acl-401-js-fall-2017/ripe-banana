@@ -1,18 +1,11 @@
 
 const {assert} = require('chai');
-const Reviewer = require('../../lib/models/Reviewer');
-const Film = require('../../lib/models/Film');
-const Studio = require('../../lib/models/Studio');
 const Review = require('../../lib/models/Review');
 
 describe('Review Model', () => {
 
     let randomID = null;
-    let instFilm = null;
-
     let rawData = null;
-
-
 
     before(() => {
         randomID = '59ed81a77d24225ec86bec2c';     
