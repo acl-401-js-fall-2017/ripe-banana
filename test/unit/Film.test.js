@@ -61,7 +61,6 @@ describe('Film model', () => {
         delete rawData.cast[0].actor;
         const newMov = new Film(rawData);
         assert.ok(newMov._id);
-        const test = newMov.validateSync().errors;
         assert.equal(newMov.validateSync().errors['cast.0.actor'].kind, 'required');
     });  
 });
