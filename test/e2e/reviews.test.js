@@ -61,6 +61,7 @@ describe('review API', () => {
                 saved = _saved;
                 savedData = saved.map( save => {
                     return {
+                        _id: save._id,
                         rating: save.rating,
                         reviewText: save.reviewText
                     };
