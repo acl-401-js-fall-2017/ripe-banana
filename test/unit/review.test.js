@@ -8,7 +8,6 @@ describe('review model', () => {
         name: 'Kate Taylor',
         company: 'Globe and Mail'
     });
-    console.log('I AM THE TEST REVIEWER =============', testReviewer)
 
     it('Validates a good model ', () => {
         const review = new Review({
