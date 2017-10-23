@@ -91,11 +91,11 @@ describe('actor CRUD', () => {
                                 }
                             ]
                         }
-                    ]
+                    ];
                     const saveFilms = [
                         request.post('/api/films').send(filmData[0]),
                         request.post('/api/films').send(filmData[1])
-                    ]
+                    ];
                     return Promise.all(saveFilms)
                         .then(filmRes => {
 
