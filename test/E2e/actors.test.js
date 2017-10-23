@@ -69,5 +69,25 @@ describe('actors API', () => {
                 });
     });
 
+    it('Changes an actor by ID', ()=> {
+        const badActor= {
+            name:'Kevin Sausage'
+        };
+        let savedActor = null;
+
+        return request.post('/api/actors')
+            .send(badActor)
+            .then( res => savedActor = res.body)
+            .then(() => {
+                badActor.name = 'Kevin Bacon';
+                return request
+                    .put(`/api/actors/${savedActor._id}`)
+                    .send( badActor);
+            })
+            .then( res => {
+                assert.deepEqual( res.body.nModified ===1, true);
+            });
+
+    });
 
 });
