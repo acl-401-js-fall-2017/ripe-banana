@@ -45,4 +45,29 @@ describe('actors API', () => {
                 assert.deepEqual(res.body, savedNames);
             });
     });
+
+    it.skip('Gets Actor with id', () => {
+        const bob = { name: 'Bob Saget' };
+        let actor = null;
+        return request.post('/api/actors')
+            .send(bob)
+            .then(res => {
+                actor = res.body;
+                return request.get(`/api/actors/${actor._id}`);
+            })
+            .then(res => {
+                assert.deepEqual(res.body, actor);
+            });
+    });
+
+    it.skip('Get by ID returns 404 for bad id', () => {
+        return request.get('/api/actors/59e401db548d1096dde508b9')
+            .then(
+                () => {throw new Error('Incorrect ID'); },
+                err => {
+                    assert.equal(err.status, 404);
+                });
+    });
+
+    
 });
