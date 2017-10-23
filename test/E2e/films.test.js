@@ -76,7 +76,7 @@ describe('films API', ()=> {
             });
     });
 
-    it.only('GETS all films', () => {
+    it('GETS all films', () => {
         const saves = [titanic, juno].map( savedFilm => {
             return request.post('/api/films')
                 .send(savedFilm)
@@ -84,6 +84,7 @@ describe('films API', ()=> {
         });
 
         let saved = null;
+        let savedData = null;
 
         return Promise.all(saves)
             .then(_saved => {
@@ -102,6 +103,30 @@ describe('films API', ()=> {
             });
 
     });
+
+    it('updates a film', () => {
+        const testFilm = {
+            title: 'Free Willy',
+            studio: 'Warner',
+            released: 1993
+        };
+
+        let savedFilm = null;
+
+        return request.post('/api/films')
+            .send(titanic)
+            .then(res => savedFilm = res.body)
+            .then(() => {
+                titanic.released = 2000;
+                return request
+                    .put(`/api/films/${savedFilm._id}`)
+                    .send(titanic);
+            })
+            .then( res => {
+                assert.deepEqual(res.body.nModified === 1, true);
+            });
+    });
+
 
     
 });
