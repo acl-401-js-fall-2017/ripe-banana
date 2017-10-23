@@ -66,13 +66,58 @@ describe('studio CRUD', () => {
                 });
         });
 
-        it('retrieves an item by its id', () => {
+        it('retrieves an item by its id (with films)', () => {
             return request.post('/api/studios')
                 .send(rawData[0])
-                .then(saved => {
-                    return request.get(`/api/studios/${saved.body._id}`)
-                        .then(gotten => {
-                            assert.deepEqual(gotten.body, saved.body);
+                .then(({body: saved}) => {
+
+                    const randomID = '59ed81a77d24225ec86bec2c';
+                    const filmData = [
+                        {
+                            title: 'Halloween',
+                            studio: saved._id,
+                            released: 2000,
+                            cast: [
+                                {
+                                    part: 'damsel in distress',
+                                    actor: randomID
+                                },
+                                {
+                                    part: 'lead',
+                                    actor: randomID
+                                }
+                            ]
+                        },
+                        {
+                            title: 'Blade Runner',
+                            studio: saved._id,
+                            released: 2017,
+                            cast: [
+                                {
+                                    part: 'android',
+                                    actor: randomID
+                                },
+                                {
+                                    part: 'human',
+                                    actor: randomID
+                                }
+                            ]
+                        }
+                    ];
+                    const saveFilms = [
+                        request.post('/api/films').send(filmData[0]),
+                        request.post('/api/films').send(filmData[1])
+                    ];
+
+                    return Promise.all(saveFilms)
+                        .then(savedFilms => {
+                            const films = savedFilms.map(res => res.body.title);
+                            saved.films = films;
+        
+                            return request.get(`/api/studios/${saved._id}`)
+                                .then(gotten => {
+                                    assert.deepEqual(gotten.body, saved);
+                                });
                         });
                 });
         });

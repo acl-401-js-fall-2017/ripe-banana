@@ -3,5 +3,6 @@ node_modules
 .vs_code
 .env
 npm-debug.log
+.eslintrc
 
 package.json
