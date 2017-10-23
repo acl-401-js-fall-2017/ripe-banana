@@ -3,7 +3,6 @@ const mongoose = require('mongoose');
 const request = require('./request');
 
 describe('films API', ()=> {
-    beforeEach(() => mongoose.connection.dropDatabase());
 
     let studio = { 
         name: 'Warner',
@@ -13,36 +12,49 @@ describe('films API', ()=> {
         }
     };
 
+    let titanic = null;
+
+    beforeEach(() => {
+        mongoose.connection.dropDatabase();
+       
+        
+        return request.post('/api/studios')
+            .send(studio)
+            .then( res => res.body)
+            .then(saved => {
+                studio = saved;
+            
+                titanic = { 
+                    title: 'Titanic', 
+                    studio: studio._id, 
+                    released: 1998 };    
+            });
+    });
+
+
     const frozen = {
-        name: 'frozen',
+        title: 'frozen',
         studio: 'fox',
         released: 2015
     };
     const juno = {
-        name: 'juno', 
+        title: 'juno', 
         studio: 'warner',
         released: 2002
     };
-    let titanic = { title: 'Titanic', studio: 'fox', released: 1998 };    
-
-    before(() => {
-        return request.post('/api/studios')
-            .send(studio)
-            .then( res => res.body)
-            .then(saved => studio = saved);
-    });
 
 
-    it('POST should add a film', () => {
-        titanic.studio = studio._id;
+
+    it.only('POST should add a film', () => {
+        
         return request.post('/api/films')
             .send(titanic)
-            .then(res => res.body)
-            .then(saved => {
-                assert.ok(saved._id);
-
-                titanic = saved;
+            .then(res => {
+                const film = res.body;
+                assert.ok(film._id);
+                assert.equal(film.title, titanic.title);
             });
+            
     });
 
     it('first GET should return empty array', () => {
