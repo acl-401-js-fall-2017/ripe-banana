@@ -104,7 +104,7 @@ route | returns
 
 #### POST/PATCH
 
-Studio, Films, and Actors, Reviewers and Reviews can be added or updated.
+Studio, Films, and Actors, Reviewers and Reviews can be added and updated.
 
 Actors are added to films as part of normal film insert or update.
 
