@@ -46,7 +46,7 @@ describe('actors API', () => {
             });
     });
 
-    it.skip('Gets Actor with id', () => {
+    it('Gets Actor with id', () => {
         const bob = { name: 'Bob Saget' };
         let actor = null;
         return request.post('/api/actors')
@@ -60,7 +60,7 @@ describe('actors API', () => {
             });
     });
 
-    it.skip('Get by ID returns 404 for bad id', () => {
+    it('Get by ID returns 404 for bad id', () => {
         return request.get('/api/actors/59e401db548d1096dde508b9')
             .then(
                 () => {throw new Error('Incorrect ID'); },
@@ -69,5 +69,5 @@ describe('actors API', () => {
                 });
     });
 
-    
+
 });
