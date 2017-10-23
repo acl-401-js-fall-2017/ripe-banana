@@ -180,7 +180,7 @@ describe('films router', () => {
             })
         });
 
-        describe.only('delete', () => {
+        describe('delete', () => {
             it('removes the film with the given id from the collection', () => {
 
                 return request.post('/api/films')
