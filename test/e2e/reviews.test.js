@@ -7,6 +7,7 @@ describe('review API', () => {
     let testReview1 = null;
     let testReview2 = null;
     let testReview3 = null;
+    let testReviewer = null;
 
     beforeEach(() => {
         mongoose.connection.dropDatabase();
@@ -19,7 +20,7 @@ describe('review API', () => {
         return request.post('/api/reviewers')
             .send(reviewer)
             .then(res => {
-                const testReviewer = res.body;
+                testReviewer = res.body;
                 testReview1 = {
                     rating: 1,
                     reviewer: testReviewer._id,
@@ -71,6 +72,30 @@ describe('review API', () => {
             .then(res =>{
                 assert.deepEqual(res.body, savedData);
             });
+    });
+
+    it('updates a review', () => {
+        const badReview = {
+            rating: 1,
+            reviewer: testReviewer._id,
+            reviewText: 'this movie sucks'
+        };
+
+        let savedReview = null;
+
+        return request.post('/api/reviews')
+            .send(badReview)
+            .then(res => savedReview = res.body)
+            .then(() => {
+                badReview.rating = 5;
+                return request
+                    .put(`/api/reviews/${savedReview._id}`)
+                    .send( badReview );
+            })
+            .then( res => {
+                assert.deepEqual(res.body.nModified === 1, true);
+            });
+
     });
 
 });
