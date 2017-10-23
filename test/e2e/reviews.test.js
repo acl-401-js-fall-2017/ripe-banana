@@ -139,7 +139,6 @@ describe('Reviews CRUD', () => {
                             }
                         ];
                     });
-
             });
     });
 
@@ -165,6 +164,7 @@ describe('Reviews CRUD', () => {
                         const leanReview = {
                             _id: r._id,
                             review: r.review,
+                            rating: r.rating,
                             film: null
                         };
                         films.forEach(f => {
