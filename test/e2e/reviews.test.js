@@ -152,4 +152,31 @@ describe('Reviews CRUD', () => {
                 });
         });
     });
+    describe('Reviews GET', () => {
+        it('Gets all(max 100) reviews with rating, review, and film name', () => {
+            const saveReviews = [
+                request.post('/api/reviews').send(reviewData[0]),
+                request.post('/api/reviews').send(reviewData[1])
+            ];
+            return Promise.all(saveReviews)
+                .then(revResArr => {
+                    let revArr = revResArr.map((r) => r.body);
+                    revArr = revArr.map(r => {
+                        const leanReview = {
+                            _id: r._id,
+                            review: r.review,
+                            film: null
+                        };
+                        films.forEach(f => {
+                            if(f._id === r.film) leanReview.film = f.title;
+                        });
+                        return leanReview;
+                    });
+                    return request.get('/api/reviews')
+                        .then(({body: getArr}) => {
+                            revArr.forEach(r => assert.deepInclude(getArr, r));
+                        });
+                });
+        });
+    });
 });

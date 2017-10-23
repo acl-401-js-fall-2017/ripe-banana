@@ -52,15 +52,11 @@ describe('Review Model', () => {
 
     it('required fields', () => {
         const review = new Review({});
-        delete review.createdAt;
-        delete review.updatedAt;
         
         const errors = review.validateSync().errors;
         assert.equal(errors.rating.kind, 'required');
         assert.equal(errors.reviewer.kind, 'required');
         assert.equal(errors.review.kind, 'required');
         assert.equal(errors.film.kind, 'required');
-        assert.equal(errors.createdAt.kind, 'required');
-        assert.equal(errors.updatedAt.kind, 'required');
     });
 });
