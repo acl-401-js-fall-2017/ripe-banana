@@ -38,6 +38,16 @@ describe('Film model', () => {
         const newMov = new Film(rawData);
         assert.ok(newMov._id);
         assert.ok(!newMov.validateSync());
+    });
+    
+    it('invalidates film without title and studio id', () => {
+        delete rawData.title;
+        delete rawData.studio;
+        const newMov = new Film(rawData);
+        assert.ok(newMov._id);
+        assert.equal(newMov.validateSync().errors.title.kind, 'required');
+        assert.equal(newMov.validateSync().errors.studio.kind, 'required');
+
     })
 
 });
