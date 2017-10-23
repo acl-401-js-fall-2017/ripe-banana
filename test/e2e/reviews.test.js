@@ -66,7 +66,7 @@ describe('review API', () => {
                         rating: save.rating,
                         reviewText: save.reviewText
                     };
-                });
+                }).sort((a,b) => a._id < b._id);
                 return request.get('/api/reviews');
             })
             .then(res =>{

@@ -33,11 +33,11 @@ describe('reviewer API', () => {
                 .then(res => res.body);
         });
         let saved = null;
-        let savedNames = null;
+        let savedData = null;
         return Promise.all(saves)
             .then(_saved => {
                 saved = _saved;
-                savedNames = saved.map(save => {
+                savedData = saved.map(save => {
                     return {
                         _id: save._id,
                         name: save.name
@@ -46,7 +46,8 @@ describe('reviewer API', () => {
                 return request.get('/api/reviewers');
             })
             .then(res => {
-                assert.deepEqual(res.body, savedNames);
+                let sortedSavedData = savedData.sort((a,b) => a._id < b._id);
+                assert.deepEqual(res.body, sortedSavedData);
             });
     });
 
@@ -77,14 +78,23 @@ describe('reviewer API', () => {
                     reviewer: reviewer._id,
                     reviewText: 'this movie is great'
                 };
-                let theReviews = [testReview1, testReview2, testReview3]
+
                 id = reviewer._id;
+                let theReviews = [testReview1, testReview2, testReview3].map(review =>{ 
+                    return request.post('/api/reviews')
+                        .send(review)
+                        .then(res =>  res.body);
+                });
+                return Promise.all(theReviews)
+                    .then((response) => {
+                        return request.get(`/api/reviewers/${id}`)
+                            .then(res => {
+                                let sortedReviews = response.sort((a,b) => a.createdAt < b.createdAt);
+                                let checkObject = { _id: id, name: reviewer.name, reviews: sortedReviews };
+                                assert.deepEqual(res.body, checkObject);
+                            });
 
-                return request.get(`/api/reviewers/${id}`)
-                    .then(res => {
-                        assert.deepEqual(res.body, { _id: id, name: reviewer.name, reviews: theReviews });
                     });
-
             });
 
     });
