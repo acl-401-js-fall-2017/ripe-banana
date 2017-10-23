@@ -142,4 +142,14 @@ describe('Reviews CRUD', () => {
 
             });
     });
+
+    describe('Reviews POST', () => {
+        it('Post a review and return with id', () => {
+            return request.post('/api/reviews')
+                .send(reviewData[1])
+                .then(({body: revRes}) => {
+                    assert.ok(revRes._id);
+                });
+        });
+    });
 });
