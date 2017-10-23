@@ -19,4 +19,11 @@ describe('review model', () => {
         assert.equal(review.validateSync(), undefined);
     });
 
+    it('checks for required fields', ()=> {
+        const review = new Review({});
+        const { errors } = review.validateSync(); 
+        assert.equal(errors.rating.kind, 'required');
+        assert.equal(errors.reviewText.kind, 'required');
+    });
+
 });
