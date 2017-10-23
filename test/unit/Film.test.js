@@ -47,7 +47,15 @@ describe('Film model', () => {
         assert.ok(newMov._id);
         assert.equal(newMov.validateSync().errors.title.kind, 'required');
         assert.equal(newMov.validateSync().errors.studio.kind, 'required');
+    });
+    
+    it('invalidates film without a valid 4 digit year', () => {
 
-    })
+        rawData.released = 19887;
+        const newMov2 = new Film(rawData);
+        assert.ok(newMov2._id);
+        assert.equal(newMov2.validateSync().errors.released.message, 'not a 4 digit year');
+    });
 
+    
 });
