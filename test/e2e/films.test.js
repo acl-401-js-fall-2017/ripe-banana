@@ -263,8 +263,8 @@ describe('films router', () => {
                         filmRes.title = 'Changes';
                         return request.patch(`/api/films/${filmRes._id}`)
                             .send({title: 'Changes'})
-                            .then(({body: updateRes}) => {
-                                assert.deepEqual(filmRes, updateRes);
+                            .then(({body: updateFilm}) => {
+                                assert.deepEqual(filmRes, updateFilm);
                             });
                     });
             });
