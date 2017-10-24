@@ -150,4 +150,19 @@ describe('Reviewer CRUD', () => {
                 });
         });
     });
+
+    describe('PATCH', () => {
+        it('replaces part of a reviewer document', () => {
+            return request.post('/api/reviewers')
+                .send(rawData[1])
+                .then(({body: saved}) => {
+                    saved.company = 'company';
+                    return request.patch(`/api/reviewers/${saved._id}`)
+                        .send({company: 'company'})
+                        .then(({body: updated}) => {
+                            assert.deepEqual(saved, updated);
+                        });
+                });
+        });
+    });
 });
