@@ -120,4 +120,20 @@ describe('actor CRUD', () => {
                 });
         });
     });
+
+    describe('Actors PATCH', () => {
+        it('Patch an actor and returns it', () => {
+            return request.post('/api/actors')
+                .send(rawData[0])
+                .then(({body: actorRes}) => {
+                    assert.ok(actorRes._id);
+                    actorRes.pob = 'NW 8th Ave, Portland, Oregon 97209';
+                    return request.patch(`/api/actors/${actorRes._id}`)
+                        .send({pob: 'NW 8th Ave, Portland, Oregon 97209'})
+                        .then(({body: updateActor}) => {
+                            assert.deepEqual(actorRes, updateActor);
+                        });
+                });
+        });
+    });
 });
