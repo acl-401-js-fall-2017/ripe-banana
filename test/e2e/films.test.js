@@ -109,11 +109,9 @@ describe('films API', () => {
                         assert.propertyVal(film, 'title', 'Titanic');
                         assert.propertyVal(film.studio, 'name', 'Warner');
                         assert.ok(film.cast);
-                        assert.propertyVal(
-                            film, 'cast',
-                            [{ part: 'Rose DeWitt Bukater', actor_id: actorsWithID[1]._id },
-                                { part: 'Jack Dawson', actor_id: actorsWithID[0]._id }]
-                        );
+                        console.log('I AM THE FILM ====ACTOR', film.cast[0].actor);
+                        assert.deepEqual(film.cast[0].actor.name, 'Kate Winslet');
+                        assert.deepEqual(film.cast[1].actor.name, 'Leonardo DiCaprio');
                     });
 
             });
