@@ -146,4 +146,19 @@ describe('studio CRUD', () => {
                 });
         });
     });
+
+    describe('patch', () => {
+        it('updates a part of the studio document', () => {
+            return request.post('/api/studios')
+                .send(tw)
+                .then(({ body: saved }) => {
+                    return request.patch(`/api/studios/${saved._id}`)
+                        .send({name: 'Time Winner'})
+                        .then(({ body: updated }) => {
+                            saved.name = 'Time Winner';
+                            assert.deepEqual(saved, updated);
+                        });
+                });
+        });
+    });
 });
