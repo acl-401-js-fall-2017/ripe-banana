@@ -28,7 +28,9 @@ describe('films API', ()=> {
                 titanic = { 
                     title: 'Titanic', 
                     studio: studio._id, 
-                    released: 1998 };  
+                    released: 1998 
+                    
+                };  
 
                 juno = {
                     title: 'juno', 
@@ -71,8 +73,13 @@ describe('films API', ()=> {
                     .then(film => {
                         assert.propertyVal(film, 'title', 'Titanic');
                         assert.propertyVal(film.studio, 'name', 'Warner');
+                        assert.propertyVal(
+                            film, 'cast',
+                            [{ part: 'Jack Dawson', actor_id: '' },
+                                { part: 'Rose DeWitt Bukater', actor_id: '' }]
+                        );
                     });
-                
+
             });
     });
 
