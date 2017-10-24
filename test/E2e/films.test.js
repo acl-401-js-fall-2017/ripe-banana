@@ -2,9 +2,9 @@ const assert = require('chai').assert;
 const mongoose = require('mongoose');
 const request = require('./request');
 
-describe('films API', ()=> {
+describe('films API', () => {
 
-    let studio = { 
+    let studio = {
         name: 'Warner',
         address: {
             city: 'Hollywood',
@@ -12,45 +12,79 @@ describe('films API', ()=> {
         }
     };
 
+    let leonardoDiCaprio = {
+        name: 'Leonardo DiCaprio'
+    };
+
+    let kateWinslet = {
+        name: 'Kate Winslet'
+    };
+
+    let actors = [leonardoDiCaprio, kateWinslet];
+
+
     let titanic = null;
     let juno = null;
+    let actorsWithID = null;
 
     beforeEach(() => {
         mongoose.connection.dropDatabase();
-       
-        
+
         return request.post('/api/studios')
             .send(studio)
-            .then( res => res.body)
+            .then(res => res.body)
             .then(saved => {
                 studio = saved;
-            
-                titanic = { 
-                    title: 'Titanic', 
-                    studio: studio._id, 
-                    released: 1998 
-                    
-                };  
+            })
+            .then(() => {
+                const savedActors = actors.map(actor => {
+                    return request.post('/api/actors')
+                        .send(actor)
+                        .then(res => res.body);
+                });
+                return Promise.all(savedActors)
+                    .then(saves => {
+                        saves = saves.sort((a, b) => a._id < b._id);
+                        return saves;
+                    })
+                    .then((actorSaved) => {
+                        actorsWithID = actorSaved;
+                        titanic = {
+                            title: 'Titanic',
+                            studio: studio._id,
+                            released: 1998,
+                            cast: [
+                                {
+                                    part: 'Rose DeWitt Bukater',
+                                    actor: actorsWithID[0]._id
+                                },
+                                {
+                                    part: 'Jack Dawson',
+                                    actor: actorsWithID[1]._id
+                                }
+                            ]
 
-                juno = {
-                    title: 'juno', 
-                    studio: studio._id,
-                    released: 2002
-                };
+                        };
+                        console.log('I AM THE FILM IN THE BEFORE EACH',titanic);
+
+                        juno = {
+                            title: 'juno',
+                            studio: studio._id,
+                            released: 2002
+                        };
+
+                    });
+
+
             });
     });
 
 
-    const frozen = {
-        title: 'frozen',
-        studio: 'fox',
-        released: 2015
-    };
 
 
 
     it('POST should add a film', () => {
-        
+
         return request.post('/api/films')
             .send(titanic)
             .then(res => {
@@ -58,25 +92,27 @@ describe('films API', ()=> {
                 assert.ok(film._id);
                 assert.equal(film.title, titanic.title);
             });
-            
+
     });
 
-    
+
     it('GET by id should return title and studio fields', () => {
         return request.post('/api/films')
             .send(titanic)
             .then(film => {
                 film = film.body;
-                
+
                 return request.get(`/api/films/${film._id}`)
                     .then(res => res.body)
                     .then(film => {
+                        console.log('I AM THE FILM', film);
                         assert.propertyVal(film, 'title', 'Titanic');
                         assert.propertyVal(film.studio, 'name', 'Warner');
+                        assert.ok(film.cast);
                         assert.propertyVal(
                             film, 'cast',
-                            [{ part: 'Jack Dawson', actor_id: '' },
-                                { part: 'Rose DeWitt Bukater', actor_id: '' }]
+                            [{ part: 'Rose DeWitt Bukater', actor_id: actorsWithID[1]._id },
+                                { part: 'Jack Dawson', actor_id: actorsWithID[0]._id }]
                         );
                     });
 
@@ -84,7 +120,7 @@ describe('films API', ()=> {
     });
 
     it('GETS all films', () => {
-        const saves = [titanic, juno].map( savedFilm => {
+        const saves = [titanic, juno].map(savedFilm => {
             return request.post('/api/films')
                 .send(savedFilm)
                 .then(res => res.body);
@@ -105,18 +141,13 @@ describe('films API', ()=> {
                 return request.get('/api/films');
             })
             .then(res => {
-                let sortedSavedData = savedData.sort((a,b) => a._id < b._id);
+                let sortedSavedData = savedData.sort((a, b) => a._id < b._id);
                 assert.deepEqual(res.body, sortedSavedData);
             });
 
     });
 
     it('updates a film', () => {
-        const testFilm = {
-            title: 'Free Willy',
-            studio: 'Warner',
-            released: 1993
-        };
 
         let savedFilm = null;
 
@@ -129,7 +160,7 @@ describe('films API', ()=> {
                     .put(`/api/films/${savedFilm._id}`)
                     .send(titanic);
             })
-            .then( res => {
+            .then(res => {
                 assert.deepEqual(res.body.nModified === 1, true);
             });
     });
@@ -142,18 +173,20 @@ describe('films API', ()=> {
                 film = res.body;
                 return request.delete(`/api/films/${film._id}`);
             })
-            .then( res => {
-                assert.deepEqual(res.body, {removed: true});
+            .then(res => {
+                assert.deepEqual(res.body, { removed: true });
                 return request.get(`/api/films/${film._id}`);
             })
             .then(
-                
-                (data) => { console.log('%%%%%%%%%%%%%%%%%%%%%%', data.body);
-                    throw new Error('Unexpected successful response');},
+
+                (data) => {
+                    console.log('%%%%%%%%%%%%%%%%%%%%%%', data.body);
+                    throw new Error('Unexpected successful response');
+                },
                 err => {
                     assert.equal(err.status, 404);
                 }
             );
     });
-    
+
 });
