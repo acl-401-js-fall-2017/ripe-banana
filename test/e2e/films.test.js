@@ -253,5 +253,21 @@ describe('films router', () => {
                     });
             });
         });
+
+        describe('Films PATCH', () => {
+            it('Patch a review and returns it', () => {
+                return request.post('/api/films')
+                    .send(filmData[1])
+                    .then(({body: filmRes}) => {
+                        assert.ok(filmRes._id);
+                        filmRes.title = 'Changes';
+                        return request.patch(`/api/films/${filmRes._id}`)
+                            .send({title: 'Changes'})
+                            .then(({body: updateRes}) => {
+                                assert.deepEqual(filmRes, updateRes);
+                            });
+                    });
+            });
+        });
     });
 });
