@@ -56,8 +56,85 @@ describe('Reviewer CRUD', () => {
                 .then(res => {
                     const saved = res.body;
                     delete saved.__v;
-                    return request.get(`/api/reviewers/${saved._id}`)
-                        .then(getRes => assert.deepEqual(getRes.body, saved));     
+                    const tokenId = '59ed81a77d24225ec86bec2c';
+                    const filmData = [
+                        {
+                            title: 'Halloween',
+                            studio: tokenId,
+                            released: 2000,
+                            cast: [
+                                {
+                                    part: 'damsel in distress',
+                                    actor:tokenId
+                                },
+                                {
+                                    part: 'lead',
+                                    actor:tokenId
+                                }
+                            ]
+                        },
+                        {
+                            title: 'Blade Runner',
+                            studio: tokenId,
+                            released: 2017,
+                            cast: [
+                                {
+                                    part: 'android',
+                                    actor:tokenId
+                                },
+                                {
+                                    part: 'human',
+                                    actor:tokenId
+                                }
+                            ]
+                        }
+                    ];
+                    const savedFilms = [
+                        request.post('/api/films')
+                            .send(filmData[0]),
+                        request.post('/api/films')
+                            .send(filmData[1])
+                    ];
+
+                    return Promise.all(savedFilms)
+                        .then(filmRes => {
+                            const films = filmRes.map(r => r.body);
+
+                            const reviewData = [
+                                {
+                                    rating: 4,
+                                    reviewer: saved._id,
+                                    review: 'fbdlfkdsjfsdfkcmncmxncmxnmcnmxcnc',
+                                    film: films[0]._id
+                                },
+                                {
+                                    rating: 2,
+                                    reviewer: saved._id,
+                                    review: 'fasasasasasaasaasasasasasassa',
+                                    film: films[1]._id
+                                }
+                            ];
+
+                            return Promise.all(reviewData.map(r => request.post('/api/reviews').send(r)))
+                                .then(() => {
+                                    saved.reviews = [
+                                        {
+                                            rating: 4,
+                                            review: 'fbdlfkdsjfsdfkcmncmxncmxnmcnmxcnc',
+                                            film: films[0].title
+                                        },
+                                        {
+                                            rating: 2,
+                                            review: 'fasasasasasaasaasasasasasassa',
+                                            film: films[1].title
+                                        }
+                                    ];
+
+                                    return request.get(`/api/reviewers/${saved._id}`)
+                                        .then(getRes => assert.deepEqual(getRes.body, saved));     
+                                });
+                        });
+                        
                 });
         });
     });
