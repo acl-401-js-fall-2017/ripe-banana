@@ -20,6 +20,8 @@ describe('Studio model', () => {
     it('checks for required fields', ()=> {
         const studio = new Studio({});
         const { errors } = studio.validateSync(); 
+
+        
         assert.equal(errors.name.kind, 'required');
     });
 
