@@ -45,4 +45,32 @@ describe('studios API', () => {
                 assert.deepEqual(res.body, savedNames);
             });
     });
+
+    it('Gets studios by ID, with films', () =>{
+        let juno =null;
+        let studio = null;
+
+        return request.post('/api/studios')
+            .send(warner)
+            .then(res => {
+                studio = res.body;
+                juno = {
+                    title: 'juno',
+                    studio: studio._id,
+                    released: 2002
+                };
+                console.log('======I am da juno::::::::', studio,  juno);
+                return request.post('/api/films')
+                    .send(juno)
+                    .then(() =>{
+                        const id = studio._id;             
+                        return request.get(`/api/studios/${id}`)
+                            .then(studio =>{
+                                console.log('======I am da studios::::::::', studio, juno);
+                                assert.ok(studio.films);
+                                assert.deepEqual('juno', studio.films[0].title);
+                            });
+                    });
+            });
+    });
 });

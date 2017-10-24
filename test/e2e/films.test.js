@@ -22,7 +22,6 @@ describe('films API', () => {
 
     let actors = [leonardoDiCaprio, kateWinslet];
 
-
     let titanic = null;
     let juno = null;
     let actorsWithID = null;
@@ -63,19 +62,13 @@ describe('films API', () => {
                                     actor: actorsWithID[1]._id
                                 }
                             ]
-
                         };
-                        console.log('I AM THE FILM IN THE BEFORE EACH',titanic);
-
                         juno = {
                             title: 'juno',
                             studio: studio._id,
                             released: 2002
                         };
-
                     });
-
-
             });
     });
 
@@ -95,7 +88,6 @@ describe('films API', () => {
 
     });
 
-
     it('GET by id should return title and studio fields', () => {
         return request.post('/api/films')
             .send(titanic)
@@ -105,11 +97,9 @@ describe('films API', () => {
                 return request.get(`/api/films/${film._id}`)
                     .then(res => res.body)
                     .then(film => {
-                        console.log('I AM THE FILM', film);
                         assert.propertyVal(film, 'title', 'Titanic');
                         assert.propertyVal(film.studio, 'name', 'Warner');
                         assert.ok(film.cast);
-                        console.log('I AM THE FILM ====ACTOR', film.cast[0].actor);
                         assert.deepEqual(film.cast[0].actor.name, 'Kate Winslet');
                         assert.deepEqual(film.cast[1].actor.name, 'Leonardo DiCaprio');
                     });
@@ -142,7 +132,6 @@ describe('films API', () => {
                 let sortedSavedData = savedData.sort((a, b) => a._id < b._id);
                 assert.deepEqual(res.body, sortedSavedData);
             });
-
     });
 
     it('updates a film', () => {
@@ -176,9 +165,7 @@ describe('films API', () => {
                 return request.get(`/api/films/${film._id}`);
             })
             .then(
-
-                (data) => {
-                    console.log('%%%%%%%%%%%%%%%%%%%%%%', data.body);
+                () => {
                     throw new Error('Unexpected successful response');
                 },
                 err => {
@@ -186,5 +173,4 @@ describe('films API', () => {
                 }
             );
     });
-
 });
