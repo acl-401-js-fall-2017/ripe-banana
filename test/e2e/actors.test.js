@@ -83,11 +83,15 @@ describe('actors API', () => {
                     actor: res.body._id
                 }];
                 actor = res.body;
+                return request.put(`/api/films/${film._id}`)
+                    .send(film);
+            })
+            .then(()=>{      
                 return request.get(`/api/actors/${actor._id}`);
             })
             .then(res => {
                 assert.ok(res.body.films);
-                assert.deepEqual('Dumb and Dumberer');
+                assert.deepEqual('Dumb and Dumberer', res.body.films[0].title);
                 assert.deepEqual(res.body.name, actor.name);
             });
     });
