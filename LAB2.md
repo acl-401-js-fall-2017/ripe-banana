@@ -11,7 +11,7 @@ The `Reviewer` model **is** the "signed up" user. Add your user management featu
 to this model. This means you should solicit a company name in addition to adding email and hash. (You can
 instead choose to create a 1:1 separate model for User vs Reviewer if you wish). 
 
-**Signup and and Signin now supercede (replace) existing Reviewer routes (including PUT/PATCH)**. 
+**Signup and and Signin now supercede (replace) existing Reviewer change routes (POST, PUT, DELETE)**. 
 
 You'll need to provide:
 
