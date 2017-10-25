@@ -145,4 +145,30 @@ describe('actors API', () => {
             );
     });
 
+    it.only('does not delete actor in films', () => {
+        let actor = null; 
+        return request.post('/api/actors')
+            .send(kevin)
+            .then(res => {
+                return actor = res.body;
+            })
+            .then(() => {
+                film.cast = [{
+                    part: 'dad',
+                    actor: actor._id
+                }];
+                return request.put(`/api/films/${film._id}`)
+                    .send(film);
+            })
+            .then(()=>{
+                return request.delete(`/api/actors/${actor._id}`)
+                    .then(res => {
+                        assert.deepEqual(res.body, { removed: false });
+                    });
+            });
+
+
+            
+    });
+
 });
