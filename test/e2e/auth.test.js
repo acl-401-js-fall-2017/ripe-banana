@@ -16,7 +16,9 @@ describe('Auth API', () => {
                 name: 'Zach',
                 company: 'Alchemy Code Labs'
             })
-            .then(({ body }) => token = body.token);
+            .then(({body}) =>  {
+                token = body.token;
+            });
     });
 
     it.only('signup', () => {
