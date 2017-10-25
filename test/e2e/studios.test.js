@@ -12,6 +12,31 @@ describe('studios API', () => {
         name: 'Fox'
     };
 
+    const searchLight = {
+        name: 'Searchlight'
+    };
+
+    let studio = null;
+    let film = null;
+
+    beforeEach(()=> {
+        return request.post('/api/studios')
+            .send(searchLight)
+            .then(res => studio = res.body);
+    });
+
+
+    beforeEach(()=>{
+        film = {
+            title: 'Dumb and Dumberer',
+            studio: studio._id,
+            released: 1998,
+        };
+        return request.post('/api/films')
+            .send(film)
+            .then(res => film = res.body);
+    });
+
     it('Post saves a studio with ID', () => {
         return request.post('/api/studios')
             .send(warner)
@@ -33,6 +58,7 @@ describe('studios API', () => {
         return Promise.all(saves)
             .then(_saved => {
                 saved = _saved;
+                saved.unshift(studio);
                 savedNames = saved.map( save => { 
                     return {
                         _id: save._id,
@@ -83,6 +109,14 @@ describe('studios API', () => {
             })
             .then(res => {
                 assert.deepEqual(res.body, { removed: true });
+            });
+            
+    });
+
+    it('does not delete studio if films', () => {
+        return request.delete(`/api/studios/${studio._id}`)
+            .then(res => {
+                assert.deepEqual(res.body, { removed: false });
             });
             
     });
