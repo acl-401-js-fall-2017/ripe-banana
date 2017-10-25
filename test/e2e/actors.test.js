@@ -145,7 +145,7 @@ describe('actors API', () => {
             );
     });
 
-    it.only('does not delete actor in films', () => {
+    it('does not delete actor in films', () => {
         let actor = null; 
         return request.post('/api/actors')
             .send(kevin)

@@ -8,9 +8,35 @@ describe('review API', () => {
     let testReview2 = null;
     let testReview3 = null;
     let testReviewer = null;
+    let studio = null;
+    let film = null;
+    const searchLight = {
+        name: 'Searchlight'
+    };
+
+
+    beforeEach(()=> {
+        mongoose.connection.dropDatabase();
+        return request.post('/api/studios')
+            .send(searchLight)
+            .then(res => studio = res.body);
+    });
+
+
+    beforeEach(()=>{
+        film = {
+            title: 'Dumb and Dumberer',
+            studio: studio._id,
+            released: 1998,
+        };
+        return request.post('/api/films')
+            .send(film)
+            .then(res => film = res.body);
+    }); 
+
+   
 
     beforeEach(() => {
-        mongoose.connection.dropDatabase();
 
         const reviewer = {
             name: 'Kate Taylor',
@@ -24,17 +50,20 @@ describe('review API', () => {
                 testReview1 = {
                     rating: 1,
                     reviewer: testReviewer._id,
-                    reviewText: 'this movie sucks'
+                    reviewText: 'this movie sucks',
+                    film: film._id
                 };
                 testReview2 = {
                     rating: 2,
                     reviewer: testReviewer._id,
-                    reviewText: 'this movie is poo'
+                    reviewText: 'this movie is poo',
+                    film: film._id
                 };
                 testReview3 = {
                     rating: 5,
                     reviewer: testReviewer._id,
-                    reviewText: 'this movie is great'
+                    reviewText: 'this movie is great',
+                    film: film._id
                 };
             });
     });

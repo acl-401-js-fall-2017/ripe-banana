@@ -16,6 +16,35 @@ describe('reviewer API', () => {
         company: 'ReelViews'
     };
 
+    let studio = null;
+    let film = null;
+    const searchLight = {
+        name: 'Searchlight'
+    };
+
+
+    beforeEach(()=> {
+
+        return request.post('/api/studios')
+            .send(searchLight)
+            .then(res => studio = res.body);
+    });
+
+
+    beforeEach(()=>{
+        film = {
+            title: 'Dumb and Dumberer',
+            studio: studio._id,
+            released: 1998,
+        };
+        return request.post('/api/films')
+            .send(film)
+            .then(res => film = res.body);
+    }); 
+
+   
+
+
     it('saves a reviewer with id', () => {
         return request.post('/api/reviewers')
             .send(kateTaylor)
@@ -66,17 +95,20 @@ describe('reviewer API', () => {
                 testReview1 = {
                     rating: 1,
                     reviewer: reviewer._id,
-                    reviewText: 'this movie sucks'
+                    reviewText: 'this movie sucks',
+                    film: film._id
                 };
                 testReview2 = {
                     rating: 2,
                     reviewer: reviewer._id,
-                    reviewText: 'this movie is poo'
+                    reviewText: 'this movie is poo',
+                    film: film._id
                 };
                 testReview3 = {
                     rating: 5,
                     reviewer: reviewer._id,
-                    reviewText: 'this movie is great'
+                    reviewText: 'this movie is great',
+                    film: film._id
                 };
 
                 id = reviewer._id;
