@@ -121,15 +121,27 @@ describe('reviewer API', () => {
                     .then((response) => {
                         return request.get(`/api/reviewers/${id}`)
                             .then(res => {
-                                let sortedReviews = response.sort((a,b) => a.createdAt < b.createdAt);
-                                //let filmCheck = [{title: 'Dumb and Dumberer', released: 1998}];
+                                let trimmedReviews = response.map(x => {
+                                    return {
+                                        _id: x._id,
+                                        rating: x.rating,
+                                        reviewText: x.reviewText,
+                                        film: x.film
+                                    };
+                                
+                                });
+                                let sortedReviews = trimmedReviews.sort((a,b) => a.createdAt < b.createdAt);
                                 let checkObject = {
                                     _id: id,
                                     name: reviewer.name,
                                     company: reviewer.company,
                                     reviews: sortedReviews,
                                 };
-                                assert.deepEqual(res.body, checkObject);
+                                assert.ok(res.body.reviews);
+                                assert.deepEqual(res.body.name, checkObject.name);
+                                assert.deepEqual(res.body.reviews[0].reviewText, checkObject.reviews[0].reviewText);
+                                assert.deepEqual(res.body.reviews[1].reviewText, checkObject.reviews[1].reviewText);
+                                assert.deepEqual(res.body.reviews[2].reviewText, checkObject.reviews[2].reviewText);
                             });
 
                     });
