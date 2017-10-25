@@ -121,7 +121,7 @@ describe('actors API', () => {
                     .send( badActor);
             })
             .then( res => {
-                assert.deepEqual( res.body.nModified ===1, true);
+                assert.deepEqual( res.body.nModified === 1, true);
             });
     });
 

@@ -100,7 +100,7 @@ describe('studios API', () => {
     });
 
     it('deletes studio by ID', () => {
-        let studio = null;
+        studio = null;
         return request.post('/api/studios')
             .send(warner)
             .then(res => {
