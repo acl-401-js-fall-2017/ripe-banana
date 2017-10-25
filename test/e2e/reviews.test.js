@@ -99,7 +99,13 @@ describe('review API', () => {
                 return request.get('/api/reviews');
             })
             .then(res =>{
-                assert.deepEqual(res.body, savedData);
+                assert.ok(res.body[0].film);
+                assert.ok(res.body[1].film);
+                assert.ok(res.body[2].film);
+                assert.deepEqual(res.body.length, savedData.length);
+                assert.deepEqual(res.body[0]._id, savedData[0]._id);
+                assert.deepEqual(res.body[1]._id, savedData[1]._id);
+                assert.deepEqual(res.body[2]._id, savedData[2]._id);
             });
     });
 
