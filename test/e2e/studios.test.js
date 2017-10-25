@@ -72,4 +72,19 @@ describe('studios API', () => {
                     });
             });
     });
+
+    it('deletes studio by ID', () => {
+        let studio = null;
+        return request.post('/api/studios')
+            .send(warner)
+            .then(res => {
+                studio = res.body;
+                return request.delete(`/api/studios/${studio._id}`);
+            })
+            .then(res => {
+                assert.deepEqual(res.body, { removed: true });
+            });
+            
+    });
+
 });
