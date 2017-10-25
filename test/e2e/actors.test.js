@@ -2,15 +2,41 @@ const assert = require('chai').assert;
 const mongoose = require('mongoose');
 const request = require('./request');
 
+
 describe('actors API', () => {
     beforeEach(() => mongoose.connection.dropDatabase());
-
+    
     const kevin = {
         name: 'Kevin Bacon'
     };
+    
     const amy = {
         name: 'Amy Adams'
     };
+
+    const warner = {
+        name: 'Warner'
+    };
+    
+    let studio = null;
+    let film = null; 
+    beforeEach(()=> {
+        return request.post('/api/studios')
+            .send(warner)
+            .then(res => studio = res.body);
+    });
+
+    beforeEach(()=>{
+        film = {
+            title: 'Dumb and Dumberer',
+            studio: studio._id,
+            released: 1998,
+        };
+        return request.post('/api/films')
+            .send(film)
+            .then(res => film = res.body);
+    });
+
 
     it('saves an actor with ID', () => {
         return request.post('/api/actors')
@@ -52,11 +78,17 @@ describe('actors API', () => {
         return request.post('/api/actors')
             .send(bob)
             .then(res => {
+                film.cast = [{
+                    part: 'dad',
+                    actor: res.body._id
+                }];
                 actor = res.body;
                 return request.get(`/api/actors/${actor._id}`);
             })
             .then(res => {
-                assert.deepEqual(res.body, actor);
+                assert.ok(res.body.films);
+                assert.deepEqual('Dumb and Dumberer');
+                assert.deepEqual(res.body.name, actor.name);
             });
     });
 
