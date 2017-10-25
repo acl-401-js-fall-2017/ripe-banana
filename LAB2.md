@@ -9,7 +9,9 @@ For this assignment you'll add user-management, authentication, and authorizatio
 
 The `Reviewer` model **is** the "signed up" user. Add your user management features
 to this model. This means you should solicit a company name in addition to adding email and hash. (You can
-instead choose to create a 1:1 separate model for User vs Reviewer if you wish). **Signup and and Signin now supercede (replace) existing Reviewer POST route**
+instead choose to create a 1:1 separate model for User vs Reviewer if you wish). 
+
+**Signup and and Signin now supercede (replace) existing Reviewer routes (including PUT/PATCH)**. 
 
 You'll need to provide:
 
