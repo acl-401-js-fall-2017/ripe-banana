@@ -107,7 +107,8 @@ describe('review API', () => {
         const badReview = {
             rating: 1,
             reviewer: testReviewer._id,
-            reviewText: 'this movie sucks'
+            reviewText: 'this movie sucks',
+            film: film._id
         };
 
         let savedReview = null;
