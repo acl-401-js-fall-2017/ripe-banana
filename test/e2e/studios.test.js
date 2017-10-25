@@ -59,17 +59,13 @@ describe('studios API', () => {
                     studio: studio._id,
                     released: 2002
                 };
-                console.log('===11111===I am da studios::::::::', studio);
-                console.log('====11111==I am da jjjjjjjjjjjjjjj::::::::', juno);
                 return request.post('/api/films')
                     .send(juno)
                     .then(() =>{
                         const id = studio._id;             
                         return request.get(`/api/studios/${id}`)
                             .then(studio =>{
-                                console.log('======I am da studios::::::::', studio);
-                                console.log('======I am da jjjjjjjjjjjjjjj::::::::', juno);
-
+                                studio = studio.body;
                                 assert.ok(studio.films);
                                 assert.deepEqual('juno', studio.films[0].title);
                             });
