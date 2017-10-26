@@ -18,7 +18,25 @@ describe('Auth API', () => {
             .then(({ body }) => token = body.token);
     });
 
-    it.only('signup', () => {
+    it('signup', () => {
         assert.ok(token);
+    });
+
+    it.only('Can not signup with same email', ()=>{
+        return request
+            .post('/api/auth/signup')
+            .send({
+                name: 'Shane Moyo',
+                company: 'Shane Co.',
+                email: 'user',
+                password: 'def'
+            })
+            .then(
+                () => {throw new Error('Unexpected successful response'); },
+                err => {
+                    assert.equal(err.status, 400);
+                }
+            );
+
     });
 });
