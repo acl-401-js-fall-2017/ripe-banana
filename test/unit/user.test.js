@@ -3,32 +3,33 @@ const User = require('../../lib/models/user');
 
 describe('user model', () => {
 
-    it('Validates a good user model', () => {
-        const user = new User({
+    const password = 'abc';
+    let user;
+    beforeEach(()=>{
+        user = new User({
             name: 'Shane Moyo',
             company: 'Moyo reviews',
             email: 'Shane@me.com',
             hash: 'Proxy Hash',
             roles: ['user']
         });
+    });
+
+
+    it('Validates a good user model', () => {
         assert.equal(user.validateSync(), undefined);
     });
 
-    it.only('checks for required fields', ()=> {
-        const user = new User({});
+    it('checks for required fields', ()=> {
+        user = new User({});
         const { errors } = user.validateSync(); 
         assert.equal(errors.name.kind, 'required');
         assert.equal(errors.company.kind, 'required');
         assert.equal(errors.email.kind, 'required');
         assert.equal(errors.hash.kind, 'required');
     });
-
-    const user = new User({
-        email: 'shane@me.com'
-    });
-
-    const password = 'abc';
-
+    
+    
     it('generates hash from password',() => {
         user.generateHash(password);
         assert.isOk(user.hash);
