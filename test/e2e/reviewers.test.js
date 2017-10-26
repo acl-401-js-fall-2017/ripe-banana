@@ -1,4 +1,4 @@
-const {assert} = require('chai');
+const { assert } = require('chai');
 const mongoose = require('mongoose').connection;
 const request = require('./request');
 
