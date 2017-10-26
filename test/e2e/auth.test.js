@@ -30,7 +30,7 @@ describe.only('Authorization route', () => {
         }
     });
     
-    it('invalidates duplicate email', () => {
+    it('invalidates duplicate email', async () => {
         try {
             await request.post('/api/auth/signup')
                 .send({
