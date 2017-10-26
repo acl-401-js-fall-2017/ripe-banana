@@ -10,7 +10,7 @@ describe.only('Authorization route', () => {
             .send({
                 name: 'bob',
                 company: 'corkers unlimited',
-                email:  'rageAgaintTheTangerine@whitehouse.gov',
+                email:  'rageAgainstTheTangerine@whitehouse.gov',
                 password: 'FUTrump'
             });
         assert.isOk(token);
@@ -29,5 +29,25 @@ describe.only('Authorization route', () => {
             assert.equal(err.status, 400);
         }
     });
+    
+    it('invalidates duplicate email', () => {
+        try {
+            await request.post('/api/auth/signup')
+                .send({
+                    name: 'bob',
+                    company: 'corkers unlimited',
+                    email:  'rageAgaintTheTangerine@whitehouse.gov',
+                });
+            await request.post('/api/auth/signup')
+                .send({
+                    name: 'bobbo',
+                    company: 'corkers unlimited',
+                    email:  'rageAgaintTheTangerine@whitehouse.gov',
+                });
+        }
+        catch(err) {
+            assert.equal(err.status, 400);
+        }
 
+    });
 });
