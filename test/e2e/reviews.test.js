@@ -59,17 +59,16 @@ describe('Reviews CRUD', () => {
             }
         ];
 
-        const saveAllPromises = studioData.concat(actorData).map(dataObj => {
-            return request
-                .post(`/api/${dataObj.dob ? 'actors' : 'studios'}`)
-                .send(dataObj);
-        });
-        
-        return Promise.all(saveAllPromises)
-            .then(res => {
+        const save = resource => data => request.post(`/api/${resource}`).send(data).then(res => res.body);
 
-                studios = res.slice(0, studioData.length).map(r => r.body);
-                actors = res.slice( -actorData.length).map(r => r.body);
+        const saveStudios = Promise.all(studioData.map(save('studios')));
+        const saveActors = Promise.all(actorData.map(save('actors')));
+        
+        return Promise.all([saveActors, saveStudios])
+            .then(([actorsRes, studiosRes]) => {
+
+                studios = studiosRes;
+                actors = actorsRes;
 
                 filmData = [
                     {
@@ -114,16 +113,16 @@ describe('Reviews CRUD', () => {
                         company: 'film blog of gibson'
                     }
                 ];
+                
+                const save = pathEnd => data => request.post(`/api/${pathEnd}`).send(data).then(res => res.body);
 
-                const filmsReviewersSaved = filmData.concat(reviewerData).map(object => {
-                    return request.post(`/api/${object.released ? 'films' : 'reviewers'}`)
-                        .send(object);
-                });
+                const saveFilms = Promise.all(filmData.map(save('films')));
+                const saveReviewers = Promise.all(reviewerData.map(save('reviewers')));
 
-                return Promise.all(filmsReviewersSaved)
+                return Promise.all([saveFilms, saveReviewers])
                     .then(frRes => {
-                        films = frRes.slice(0, filmData.length).map(r => r.body);
-                        reviewers = frRes.slice(-reviewerData.length).map(r => r.body);
+                        films = frRes[0];
+                        reviewers = frRes[1];
                         reviewData = [
                             {
                                 rating: 3,

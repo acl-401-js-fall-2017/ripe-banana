@@ -8,6 +8,8 @@ describe('films router', () => {
     let actors = null;
     let filmData = null;
 
+
+        
     beforeEach(() => {
         mongoose.connection.dropDatabase();
 
@@ -56,17 +58,21 @@ describe('films router', () => {
             }
         ];
 
-        const saveAllPromises = studioData.concat(actorData).map(dataObj => {
+        const save = path => data => {
             return request
-                .post(`/api/${dataObj.dob ? 'actors' : 'studios'}`)
-                .send(dataObj);
-        });
-        
-        return Promise.all(saveAllPromises)
-            .then(res => {
+                .post(`/api/${path}`)
+                .send(data)
+                .then(res => res.body);
+        };
 
-                studios = res.slice(0, studioData.length).map(r => r.body);
-                actors = res.slice( -actorData.length).map(r => r.body);
+        const saveStudios = Promise.all(studioData.map(save('studios')));
+        const saveActors = Promise.all(actorData.map(save('actors')));
+
+        return Promise.all([saveStudios, saveActors])
+            .then(([studiosRes, actorsRes]) => {
+
+                studios = studiosRes;
+                actors = actorsRes;
 
                 filmData = [
                     {
