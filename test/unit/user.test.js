@@ -3,7 +3,7 @@ const User = require('../../lib/models/user');
 
 describe('user model', () => {
 
-    it.only('Validates a good user model', () => {
+    it('Validates a good user model', () => {
         const user = new User({
             name: 'Shane Moyo',
             company: 'Moyo reviews',
@@ -14,10 +14,13 @@ describe('user model', () => {
         assert.equal(user.validateSync(), undefined);
     });
 
-    it('checks for required fields', ()=> {
+    it.only('checks for required fields', ()=> {
         const user = new User({});
         const { errors } = user.validateSync(); 
         assert.equal(errors.name.kind, 'required');
+        assert.equal(errors.company.kind, 'required');
+        assert.equal(errors.email.kind, 'required');
+        assert.equal(errors.hash.kind, 'required');
     });
 
     const user = new User({
