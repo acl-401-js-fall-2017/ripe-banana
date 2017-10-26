@@ -17,12 +17,17 @@ describe.only('Authorization route', () => {
     });
 
     it('requires a password', async () => {
-        const err = await request.post('/api/signup')
-            .send({
-                name: 'bob',
-                company: 'corkers unlimited',
-                email:  'rageAgaintTheTangerine@whitehouse.gov',
-            })
-        assert.equals(err.code, 400);
+        try {
+            await request.post('/api/auth/signup')
+                .send({
+                    name: 'bob',
+                    company: 'corkers unlimited',
+                    email:  'rageAgaintTheTangerine@whitehouse.gov',
+                });
+        }
+        catch(err) {
+            assert.equal(err.status, 400);
+        }
     });
+
 });
