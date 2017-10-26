@@ -57,11 +57,27 @@ describe('Auth API', () => {
             );
     });
 
-    it.only('Signin with same credential', () => {
+    it('Signin with same credential', () => {
         return request.post('/api/auth/signin')
             .send({
                 email: 'bad@email.com',
                 password: 'grad date',
+                name: 'Zach',
+                company: 'Alchemy Code Lab'
+            })
+            .then(
+                () => { throw new Error('Unexpected successful response'); },
+                err => {
+                    assert.equal(err.status, 401);
+                }
+            );
+    });
+
+    it('Signin rejected with bad email', () => {
+        return request.post('/api/auth/signin')
+            .send({
+                email: 'bad email',
+                password: 'totally not a birthday',
                 name: 'Zach',
                 company: 'Alchemy Code Lab'
             })
