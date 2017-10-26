@@ -133,7 +133,9 @@ describe('Reviewer CRUD', () => {
                                     ];
 
                                     return request.get(`/api/reviewers/${saved._id}`)
-                                        .then(getRes => assert.deepEqual(getRes.body, saved));     
+                                        .then(getRes => {
+                                            assert.deepEqual(getRes.body, saved);
+                                        });     
                                 });
                         });
                         
