@@ -40,7 +40,7 @@ describe('Auth API', () => {
 
     });
 
-    it.only('Must include password', () => {
+    it('Must include password', () => {
         return request 
             .post('/api/auth/signup')
             .send({
@@ -55,5 +55,19 @@ describe('Auth API', () => {
                     assert.equal(err.status, 400);
                 }
             );
+    });
+
+    it('Signin with same credential', ()=>{
+        return request
+            .post('/api/auth/signin')
+            .send({
+                name: 'Shane Moyo',
+                company: 'Shane Co.',
+                email: 'user',
+                password: 'abc'
+            })
+            .then(({ body })=>{
+                assert.isOk(body.token);
+            });
     });
 });
