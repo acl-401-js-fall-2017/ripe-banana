@@ -140,6 +140,7 @@ describe('actors API', () => {
             .then( 
                 () => { throw new Error('Unexpected successful response');},
                 err => {
+                    console.log('what are you',err.status);
                     assert.equal(err.status, 404);
                 }
             );
