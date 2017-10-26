@@ -41,4 +41,20 @@ describe.only('Auth API', () => {
             );
     });
 
+    it('Must include password', () => {
+        return request.post('/api/auth/signup')
+            .send({
+                email: 'user@email.com',
+                password: 'three',
+                name: 'Zach',
+                company: 'Alchemy Code Lab'
+            })
+            .then(
+                () => { throw new Error('Unexpected successful response'); },
+                err => {
+                    assert.equal(err.status, 400);
+                }
+            );
+    });
+    
 });
