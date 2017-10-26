@@ -57,7 +57,7 @@ describe('Auth API', () => {
             );
     });
 
-    it.only('Signin with same credential', ()=>{
+    it('Signin with same credential', ()=>{
         return request
             .post('/api/auth/signin')
             .send({
@@ -67,8 +67,24 @@ describe('Auth API', () => {
                 password: 'abc'
             })
             .then(({ body })=>{
-                console.log('inside test',body);
                 assert.isOk(body.token);
             });
+    });
+
+    it.only('Signin rejected with bad eamil', ()=>{
+        return request  
+            .post('/api/auth/signin')
+            .send({
+                name: 'Shane Moyo',
+                company: 'Shane Co.',
+                email: 'bbbbbad',
+                password: 'abc'
+            })
+            .then(
+                () => { throw new Error('Unexpected successful response'); },
+                err => {
+                    assert.equal(err.status, 401);
+                }
+            );
     });
 });
