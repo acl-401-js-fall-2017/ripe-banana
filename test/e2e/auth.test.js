@@ -16,7 +16,13 @@ describe.only('Authorization route', () => {
         assert.isOk(token);
     });
 
-    it('requires a password', () => {
-
+    it('requires a password', async () => {
+        const err = await request.post('/api/signup')
+            .send({
+                name: 'bob',
+                company: 'corkers unlimited',
+                email:  'rageAgaintTheTangerine@whitehouse.gov',
+            })
+        assert.equals(err.code, 400);
     });
 });
