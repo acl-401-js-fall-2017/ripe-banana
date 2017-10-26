@@ -114,7 +114,7 @@ describe('Reviews CRUD', () => {
                     }
                 ];
                 
-                const save = pathEnd => data => request.post(`/api/${pathEnd}`).send(data).then(res => res.body)
+                const save = pathEnd => data => request.post(`/api/${pathEnd}`).send(data).then(res => res.body);
 
                 const saveFilms = Promise.all(filmData.map(save('films')));
                 const saveReviewers = Promise.all(reviewerData.map(save('reviewers')));
