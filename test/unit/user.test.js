@@ -9,14 +9,20 @@ describe('user model', () => {
 
     const password = 'abc';
 
-    it.only('generates hash from password',() => {
+    it('generates hash from password',() => {
         user.generateHash(password);
         assert.isOk(user.hash);
         assert.notEqual(user.hash, password);
     });
 
+    it.only('compares password', () => {
+        assert.isTrue(user.comparePassword('abc'));
+        assert.isFalse(user.comparePassword('bad password'));
+    });
+
+});
+
     
 
 
 
-})
