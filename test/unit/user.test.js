@@ -16,6 +16,7 @@ describe('user model', () => {
     });
 
     it.only('compares password', () => {
+        user.generateHash(password);
         assert.isTrue(user.comparePassword('abc'));
         assert.isFalse(user.comparePassword('bad password'));
     });
