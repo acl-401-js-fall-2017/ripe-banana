@@ -1,6 +1,6 @@
 const chai = require('chai');
-const chaitHttp = require('chai-http');
-chai.use(chaitHttp);
+const chaiHttp = require('chai-http');
+chai.use(chaiHttp);
 const http = require('http');
 const app = require('../../lib/app');
 

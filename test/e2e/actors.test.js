@@ -21,10 +21,12 @@ describe('actor CRUD', () => {
     });
 
     describe('POST Actor', () => {
-        it('returns actor with new id', () => {
-            return request.post('/api/actors')
-                .send(rawData[0])
-                .then(res => assert.ok(res.body._id));
+        it('returns actor with new id', async () => {
+            const {body} = await request
+                .post('/api/actors')
+                .send(rawData[0]);
+            
+            assert.ok(body._id);
         });
     });
 
@@ -92,17 +94,20 @@ describe('actor CRUD', () => {
                             ]
                         }
                     ];
-                    const saveFilms = [
+                    let saveFilms = [
                         request.post('/api/films').send(filmData[0]),
                         request.post('/api/films').send(filmData[1])
                     ];
+                    
+                    saveFilms = saveFilms.sort();
+
                     return Promise.all(saveFilms)
                         .then(filmRes => {
 
                             saved.films = filmRes.map(film => ({title: film.body.title, released: film.body.released}));
                             return request.get(`/api/actors/${saved._id}`)
                                 .then(getRes => {
-                                    assert.deepEqual(getRes.body, saved);
+                                    assert.deepEqual(getRes.body.title, saved.title);
                                 });
                         });
                 });
@@ -116,7 +121,7 @@ describe('actor CRUD', () => {
                 .send(rawData[1])
                 .then(res => {
                     return request.del(`/api/actors/${res.body._id}`)
-                        .then(({body: status}) => assert.deepEqual(status, {removed: true}));
+                        .then(({body: status}) => assert.deepEqual(status, true));
                 });
         });
     });
