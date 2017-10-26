@@ -2,7 +2,7 @@ const request = require('./request');
 const { assert } = require('chai');
 const db = require('./db');
 
-describe.only('Auth API', () => {
+describe('Auth API', () => {
 
     beforeEach(db.drop);
 
@@ -56,5 +56,5 @@ describe.only('Auth API', () => {
                 }
             );
     });
-    
+
 });
