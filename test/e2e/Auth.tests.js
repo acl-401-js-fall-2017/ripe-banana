@@ -57,7 +57,7 @@ describe('Auth API', () => {
             );
     });
 
-    it('Signin with same credential', ()=>{
+    it.only('Signin with same credential', ()=>{
         return request
             .post('/api/auth/signin')
             .send({
@@ -67,6 +67,7 @@ describe('Auth API', () => {
                 password: 'abc'
             })
             .then(({ body })=>{
+                console.log('inside test',body);
                 assert.isOk(body.token);
             });
     });
