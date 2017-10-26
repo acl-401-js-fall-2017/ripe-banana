@@ -9,16 +9,16 @@ after(() => mongoose.connection.close());
 module.exports = {
     drop () {
         return mongoose.connection.dropDatabase();
-    },
-
-    getToken(user = {
-        email: 'user@gmail.com',
-        password: 'secret'
-    })
-
-    {
-        return request.post('/api/auth/signup')
-            .send(user)
-            .then(({ body }) => body.token);
     }
+
+    // getToken(Reviewer = {
+    //     email: 'user@gmail.com',
+    //     password: 'secret'
+    // })
+
+    // {
+    //     return request.post('/api/auth/signup')
+    //         .send(Reviewer)
+    //         .then(({ body }) => body.token);
+    // }
 };
