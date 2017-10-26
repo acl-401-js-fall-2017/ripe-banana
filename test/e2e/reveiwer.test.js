@@ -137,7 +137,6 @@ describe('reviewer API', () => {
                                     company: reviewer.company,
                                     reviews: sortedReviews,
                                 };
-                                console.log('I am the reviewes indide the test', checkObject.reviews);
                                 assert.ok(res.body.reviews);
                                 assert.deepEqual(res.body.name, checkObject.name);
                                 assert.deepEqual(res.body.reviews[0].reviewText, checkObject.reviews[0].reviewText);

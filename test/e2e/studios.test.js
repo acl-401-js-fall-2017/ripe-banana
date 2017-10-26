@@ -5,17 +5,9 @@ const request = require('./request');
 describe('studios API', () => {
     beforeEach(() => mongoose.connection.dropDatabase());
 
-    const warner = {
-        name: 'Warner'
-    };
-    const fox = {
-        name: 'Fox'
-    };
-
-    const searchLight = {
-        name: 'Searchlight'
-    };
-
+    const warner = { name: 'Warner'};
+    const fox = { name: 'Fox'};
+    const searchLight = { name: 'Searchlight' };
     let studio = null;
     let film = null;
 
@@ -24,7 +16,6 @@ describe('studios API', () => {
             .send(searchLight)
             .then(res => studio = res.body);
     });
-
 
     beforeEach(()=>{
         film = {
