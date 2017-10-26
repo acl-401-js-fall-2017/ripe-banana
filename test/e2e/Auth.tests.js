@@ -22,7 +22,7 @@ describe('Auth API', () => {
         assert.ok(token);
     });
 
-    it.only('Can not signup with same email', ()=>{
+    it('Can not signup with same email', ()=>{
         return request
             .post('/api/auth/signup')
             .send({
@@ -38,5 +38,22 @@ describe('Auth API', () => {
                 }
             );
 
+    });
+
+    it.only('Must include password', () => {
+        return request 
+            .post('/api/auth/signup')
+            .send({
+                name: 'Shane Moyo',
+                company: 'Shane Co.',
+                email: 'user',
+                password: ''
+            })
+            .then(
+                () => { throw new Error('Unexpected successful respone'); },
+                err => {
+                    assert.equal(err.status, 400);
+                }
+            );
     });
 });
