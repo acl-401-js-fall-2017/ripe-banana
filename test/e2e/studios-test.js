@@ -2,7 +2,7 @@ const {assert} = require('chai');
 const mongoose = require('mongoose').connection;
 const request = require('./request');
 
-describe.only('studio CRUD', () => {
+describe('studio CRUD', () => {
 
     let rawData = [
         {
