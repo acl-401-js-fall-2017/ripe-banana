@@ -2,7 +2,7 @@ const request = require('./request');
 const assert = require('chai').assert;
 const mongoose = require('mongoose');
 
-describe.only('Authorization route', () => {
+describe('Authorization route', () => {
     beforeEach(() => mongoose.connection.dropDatabase());
 
     describe('signup', () => {
@@ -58,7 +58,6 @@ describe.only('Authorization route', () => {
     describe('sign in', () => {
         
         let userData = null;
-        let token = null;
 
         beforeEach(async () => {
 
@@ -69,21 +68,36 @@ describe.only('Authorization route', () => {
                 password: 'FUTrump'
             };
 
-            try {
-                await request.post('/api/auth/signup')
-                    .send(userData);
-            }
-            catch(err) {
-                console.log(err);
-            }
+            await request.post('/api/auth/signup')
+                .send(userData);
         });
 
         it('checks to see that the email and password match and returns a token', async () => {
             let res = await request.post('/api/auth/signin')
-                .send({name: userData.name, email: userData.email});
+                .send({password: userData.password, email: userData.email});
             
             const token = res.body;
             assert.ok(token);
+        });
+
+        it('returns a 400 if password is bad', async () => {
+            try {
+                await request.post('/api/auth/signin')
+                    .send({password: 'trumpRocks', email: userData.email});
+            }
+            catch(err) {
+                assert.equal(err.status, 400);
+            }
+        });
+
+        it('returns a 400 if email does not exist', async () => {
+            try {
+                await request.post('/api/auth/signin')
+                    .send({password: 'trumpRocks', email: 'theDonald@twit.cm'});
+            }
+            catch(err) {
+                assert.equal(err.status, 400);
+            }
         });
     });
 });
