@@ -2,6 +2,47 @@ const { assert } = require('chai');
 const mongoose = require('mongoose');
 const request = require('./request');
 
+
+describe('Reviewer Signup', () => {
+
+    beforeEach(() => mongoose.connection.dropDatabase());
+
+    const myReviewer = {
+        name: 'dan dungis',
+        company: 'trashco',
+        email: 'user@aol.com',
+        role: 'normie',
+        password: 'pass'
+    };
+    let token = null;
+    beforeEach( () => {
+        return request.post('/api/reviewers/signup')
+            .send(myReviewer)
+            .then( ({body}) => {
+                token = body.token;
+            });
+    });
+
+    it('should generate token on signup', () => {
+        assert.ok(token);
+    });
+    
+    it('should not be able to sign up with same email', () => {
+        myReviewer.password = 'newpass';
+        return request
+            .post('/api/reviewers/signup')
+            .send(myReviewer)
+            .then(
+                () => { throw new Error('unexpected success');},
+                err => { assert.equal(err.status, 400);}
+            );
+    });
+
+});
+
+
+
+
 describe('Reviewers API', () => {
 
 
