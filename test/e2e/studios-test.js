@@ -2,7 +2,7 @@ const {assert} = require('chai');
 const mongoose = require('mongoose').connection;
 const request = require('./request');
 
-describe('studio CRUD', () => {
+describe.only('studio CRUD', () => {
 
     let rawData = [
         {
@@ -39,6 +39,35 @@ describe('studio CRUD', () => {
         ts = rawData[0];
         tw = rawData[1];
         pm = rawData[2];
+    });
+
+    let token = null;
+    let superToken = null;
+    beforeEach(async () => {
+        const userData = [
+            {
+                name: 'Bub McNub',
+                company: 'Totes Real Business',
+                email: 'lololol@aol.com',
+                password:'12345'
+            },
+            {
+                name: 'Magnus ver Magnusson',
+                company: 'The Shadow Government',
+                email: 'Magnusson@Magnus.org',
+                password: '^%fyf^5f&tf&f6DR&fRF^%3S5ruJ0iN9J)OmU*hiM9VrC54@AA$zD'
+            }
+        ];
+        const saveUsers = await userData.map( data => {
+            return request.post('/api/auth/signup').send(data).then( res => {
+                return res.body;
+            });
+        });
+        return await Promise.all(saveUsers)
+            .then(([user0, user1]) => {
+                token = user0;
+                superToken = user1;
+            });
     });
 
     describe('get', () => {
@@ -123,23 +152,26 @@ describe('studio CRUD', () => {
         });
     }) ;
 
-    describe('post', () => {
+    describe('post (ADMIN ONLY ROUTE)', () => {
         it('returns the saved object with _id', () => {
             return request.post('/api/studios')
+                // .set({Authorization: superToken})
                 .send(tw)
-                .then(res => {
+                .then(res =>     {
                     tw._id = res._id;
                     assert.ok(res.body._id);
                 });
         });
     });
 
-    describe('delete', () => {
+    describe('delete (ADMIN ONLY ROUTE)', () => {
         it('deletes the saved object with _id', () => {
             return request.post('/api/studios')
+                // .set({Authorization: superToken})
                 .send(tw)
                 .then(res => {
                     return request.del(`/api/studios/${res.body._id}`)
+                        // .set({Authorization: superToken})
                         .then(deleted => {
                             assert.deepEqual(deleted.body, {removed: true});
                         });
@@ -147,12 +179,14 @@ describe('studio CRUD', () => {
         });
     });
 
-    describe('patch', () => {
+    describe('patch (ADMIN ONLY ROUTE)', () => {
         it('updates a part of the studio document', () => {
             return request.post('/api/studios')
+                // .set({Authorization: superToken})
                 .send(tw)
                 .then(({ body: saved }) => {
                     return request.patch(`/api/studios/${saved._id}`)
+                        // .set({Authorization: superToken})
                         .send({name: 'Time Winner'})
                         .then(({ body: updated }) => {
                             saved.name = 'Time Winner';
