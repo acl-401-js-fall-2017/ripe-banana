@@ -53,6 +53,7 @@ describe.only('studio CRUD', () => {
             },
             {
                 name: 'Magnus ver Magnusson',
+                roles: 'admin',
                 company: 'The Shadow Government',
                 email: 'Magnusson@Magnus.org',
                 password: '^%fyf^5f&tf&f6DR&fRF^%3S5ruJ0iN9J)OmU*hiM9VrC54@AA$zD'
@@ -74,9 +75,9 @@ describe.only('studio CRUD', () => {
         it('retrieves all items in the database', () => {
 
             const saveStudios = [
-                request.post('/api/studios').send(ts),
-                request.post('/api/studios').send(tw),
-                request.post('/api/studios').send(pm)
+                request.post('/api/studios').set({Authorization: superToken}).send(ts),
+                request.post('/api/studios').set({Authorization: superToken}).send(tw),
+                request.post('/api/studios').set({Authorization: superToken}).send(pm)
             ];
             return Promise.all(saveStudios)
                 .then(saved => {
@@ -97,6 +98,7 @@ describe.only('studio CRUD', () => {
 
         it('retrieves an item by its id (with films)', () => {
             return request.post('/api/studios')
+                .set({Authorization: superToken})
                 .send(rawData[0])
                 .then(({body: saved}) => {
 
@@ -134,8 +136,8 @@ describe.only('studio CRUD', () => {
                         }
                     ];
                     const saveFilms = [
-                        request.post('/api/films').send(filmData[0]),
-                        request.post('/api/films').send(filmData[1])
+                        request.post('/api/films').set({Authorization: superToken}).send(filmData[0]),
+                        request.post('/api/films').set({Authorization: superToken}).send(filmData[1])
                     ];
 
                     return Promise.all(saveFilms)
@@ -155,7 +157,7 @@ describe.only('studio CRUD', () => {
     describe('post (ADMIN ONLY ROUTE)', () => {
         it('returns the saved object with _id', () => {
             return request.post('/api/studios')
-                // .set({Authorization: superToken})
+                .set({Authorization: superToken})
                 .send(tw)
                 .then(res =>     {
                     tw._id = res._id;
@@ -167,11 +169,11 @@ describe.only('studio CRUD', () => {
     describe('delete (ADMIN ONLY ROUTE)', () => {
         it('deletes the saved object with _id', () => {
             return request.post('/api/studios')
-                // .set({Authorization: superToken})
+                .set({Authorization: superToken})
                 .send(tw)
                 .then(res => {
                     return request.del(`/api/studios/${res.body._id}`)
-                        // .set({Authorization: superToken})
+                        .set({Authorization: superToken})
                         .then(deleted => {
                             assert.deepEqual(deleted.body, {removed: true});
                         });
@@ -182,11 +184,11 @@ describe.only('studio CRUD', () => {
     describe('patch (ADMIN ONLY ROUTE)', () => {
         it('updates a part of the studio document', () => {
             return request.post('/api/studios')
-                // .set({Authorization: superToken})
+                .set({Authorization: superToken})
                 .send(tw)
                 .then(({ body: saved }) => {
                     return request.patch(`/api/studios/${saved._id}`)
-                        // .set({Authorization: superToken})
+                        .set({Authorization: superToken})
                         .send({name: 'Time Winner'})
                         .then(({ body: updated }) => {
                             saved.name = 'Time Winner';
