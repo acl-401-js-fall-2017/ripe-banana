@@ -21,7 +21,7 @@ describe('Auth API', () => {
             });
     });
 
-    it.only('signup', () => {
+    it('signup', () => {
         assert.ok(token);
     });
 });
