@@ -1,4 +1,4 @@
-const {assert} = require('chai');
+const { assert } = require('chai');
 const mongoose = require('mongoose').connection;
 const request = require('./request');
 
@@ -10,11 +10,13 @@ describe('Reviewer CRUD', () => {
         rawData = [
             {
                 name: 'mel',
-                company: 'film blog of mel'
+                company: 'film blog of mel',
+                email: 'mel@crazy.com'
             },
             {
                 name: 'gibson',
-                company: 'film blog of gibson'
+                company: 'film blog of gibson',
+                email: 'gibson@forsure.com'
             }
         ];
     });
@@ -131,7 +133,9 @@ describe('Reviewer CRUD', () => {
                                     ];
 
                                     return request.get(`/api/reviewers/${saved._id}`)
-                                        .then(getRes => assert.deepEqual(getRes.body, saved));     
+                                        .then(getRes => {
+                                            assert.deepEqual(getRes.body, saved);
+                                        });     
                                 });
                         });
                         
