@@ -20,9 +20,22 @@ describe.only('actor CRUD', () => {
         ];
     });
 
+    let superToken = null;
+    beforeEach(async () => {
+        ({body: superToken} = await request.post('/api/auth/signup')
+            .send({
+                name: 'Magnus ver Magnusson',
+                roles: 'admin',
+                company: 'The Shadow Government',
+                email: 'Magnusson@Magnus.org',
+                password: '^%fyf^5f&tf&f6DR&fRF^%3S5ruJ0iN9J)OmU*hiM9VrC54@AA$zD'
+            }));
+    });
+
     describe('POST Actor', () => {
         it('returns actor with new id', () => {
             return request.post('/api/actors')
+                .set({Authorization: superToken})
                 .send(rawData[0])
                 .then(res => assert.ok(res.body._id));
         });
@@ -32,8 +45,10 @@ describe.only('actor CRUD', () => {
         it('returns all when no id', () => {
             const saveAll = [
                 request.post('/api/actors')
+                    .set({Authorization: superToken})
                     .send(rawData[0]),
                 request.post('/api/actors')
+                    .set({Authorization: superToken})
                     .send(rawData[1])
             ];
 
@@ -55,6 +70,7 @@ describe.only('actor CRUD', () => {
         });
         it('get actor by id', () => {
             return request.post('/api/actors')
+                .set({Authorization: superToken})
                 .send(rawData[1])
                 .then(({body: saved}) => {
 
@@ -93,8 +109,8 @@ describe.only('actor CRUD', () => {
                         }
                     ];
                     const saveFilms = [
-                        request.post('/api/films').send(filmData[0]),
-                        request.post('/api/films').send(filmData[1])
+                        request.post('/api/films').set({Authorization: superToken}).send(filmData[0]),
+                        request.post('/api/films').set({Authorization: superToken}).send(filmData[1])
                     ];
                     return Promise.all(saveFilms)
                         .then(filmRes => {
@@ -113,9 +129,11 @@ describe.only('actor CRUD', () => {
     describe('DELETE Actor', () => {
         it('given a valid id returns removed true', () => {
             return request.post('/api/actors')
+                .set({Authorization: superToken})
                 .send(rawData[1])
                 .then(res => {
                     return request.del(`/api/actors/${res.body._id}`)
+                        .set({Authorization: superToken})                    
                         .then(({body: status}) => assert.deepEqual(status, {removed: true}));
                 });
         });
@@ -124,11 +142,13 @@ describe.only('actor CRUD', () => {
     describe('Actors PATCH', () => {
         it('Patch an actor and returns it', () => {
             return request.post('/api/actors')
+                .set({Authorization: superToken})
                 .send(rawData[0])
                 .then(({body: actorRes}) => {
                     assert.ok(actorRes._id);
                     actorRes.pob = 'NW 8th Ave, Portland, Oregon 97209';
                     return request.patch(`/api/actors/${actorRes._id}`)
+                        .set({Authorization: superToken})
                         .send({pob: 'NW 8th Ave, Portland, Oregon 97209'})
                         .then(({body: updateActor}) => {
                             assert.deepEqual(actorRes, updateActor);
