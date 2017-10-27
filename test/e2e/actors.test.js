@@ -2,7 +2,7 @@ const {assert} = require('chai');
 const mongoose = require('mongoose').connection;
 const request = require('./request');
 
-describe.only('actor CRUD', () => {
+describe('actor CRUD', () => {
     let rawData = null;
 
     beforeEach(() => {

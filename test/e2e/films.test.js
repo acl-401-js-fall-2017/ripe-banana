@@ -2,11 +2,23 @@ const request = require('./request');
 const {assert} = require('chai');
 const mongoose = require('mongoose');
 
-describe('films router', () => {
+describe.only('films router', () => {
 
     let studios = null;
     let actors = null;
     let filmData = null;
+
+    let superToken = null;
+    beforeEach(async () => {
+        ({body: superToken} = await request.post('/api/auth/signup')
+            .send({
+                name: 'Magnus ver Magnusson',
+                roles: 'admin',
+                company: 'The Shadow Government',
+                email: 'Magnusson@Magnus.org',
+                password: '^%fyf^5f&tf&f6DR&fRF^%3S5ruJ0iN9J)OmU*hiM9VrC54@AA$zD'
+            }));
+    });
 
     beforeEach(() => {
         mongoose.connection.dropDatabase();
@@ -59,6 +71,7 @@ describe('films router', () => {
         const saveAllPromises = studioData.concat(actorData).map(dataObj => {
             return request
                 .post(`/api/${dataObj.dob ? 'actors' : 'studios'}`)
+                .set({Authorization: superToken})
                 .send(dataObj);
         });
         
@@ -108,6 +121,7 @@ describe('films router', () => {
             it('returns the saved object with its new mongo id', () => {
                 return request.post('/api/films')
                     .send(filmData[0])
+                    .set({Authorization: superToken})                    
                     .then(res => {
                         const saved = res.body;
                         filmData[0]._id = saved._id;
@@ -122,7 +136,7 @@ describe('films router', () => {
         describe('get all', () => {
             it('retrieves an array holding the title, date released, and studio name of all films', () => {
                 const saveAll = filmData.map(film => {
-                    return request.post('/api/films').send(film);
+                    return request.post('/api/films').set({Authorization: superToken}).send(film);
                 });
 
                 return Promise.all(saveAll)
@@ -159,6 +173,7 @@ describe('films router', () => {
         describe('get by id', () => {   // TODO: also get review stuff
             it('retrieves the title, released date, studio name, cast( including actor\'s name and role', () => {
                 return request.post('/api/films')
+                    .set({Authorization: superToken})
                     .send(filmData[1])
                     .then(postRes => {
                         const saved = postRes.body;
@@ -183,8 +198,10 @@ describe('films router', () => {
                         ];
                         const reviewerDataSaved = [
                             request.post('/api/reviewers')
+                                .set({Authorization: superToken})
                                 .send(reviewerData[0]),
                             request.post('/api/reviewers')
+                                .set({Authorization: superToken})
                                 .send(reviewerData[1])
                         ];
                         
@@ -207,8 +224,10 @@ describe('films router', () => {
                                 ];
                                 const reviewSend = [
                                     request.post('/api/reviews')
+                                        .set({Authorization: superToken})
                                         .send(reviewData[0]),
                                     request.post('/api/reviews')
+                                        .set({Authorization: superToken})
                                         .send(reviewData[1])
                                 ];
 
@@ -243,10 +262,12 @@ describe('films router', () => {
             it('removes the film with the given id from the collection', () => {
 
                 return request.post('/api/films')
+                    .set({Authorization: superToken})
                     .send(filmData[0])
                     .then(({body: saved}) => {
 
                         return request.del(`/api/films/${saved._id}`)
+                            .set({Authorization: superToken})
                             .then(({body: status}) => {
                                 assert.deepEqual(status, {removed: true});
                             });
@@ -257,11 +278,13 @@ describe('films router', () => {
         describe('Films PATCH', () => {
             it('Patch a review and returns it', () => {
                 return request.post('/api/films')
+                    .set({Authorization: superToken})
                     .send(filmData[1])
                     .then(({body: filmRes}) => {
                         assert.ok(filmRes._id);
                         filmRes.title = 'Changes';
                         return request.patch(`/api/films/${filmRes._id}`)
+                            .set({Authorization: superToken})
                             .send({title: 'Changes'})
                             .then(({body: updateFilm}) => {
                                 assert.deepEqual(filmRes, updateFilm);
