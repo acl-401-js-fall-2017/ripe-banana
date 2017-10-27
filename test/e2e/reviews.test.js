@@ -10,6 +10,18 @@ describe('Reviews CRUD', () => {
     let films = null;
     let reviewers = null;
     let reviewData = null;
+    
+    let superToken = null;
+    beforeEach(async () => {
+        ({body: superToken} = await request.post('/api/auth/signup')
+            .send({
+                name: 'Magnus ver Magnusson',
+                roles: 'admin',
+                company: 'The Shadow Government',
+                email: 'Magnusson@Magnus.org',
+                password: '^%fyf^5f&tf&f6DR&fRF^%3S5ruJ0iN9J)OmU*hiM9VrC54@AA$zD'
+            }));
+    });
 
     beforeEach(() => {
         mongoose.dropDatabase();
@@ -62,6 +74,7 @@ describe('Reviews CRUD', () => {
         const saveAllPromises = studioData.concat(actorData).map(dataObj => {
             return request
                 .post(`/api/${dataObj.dob ? 'actors' : 'studios'}`)
+                .set({Authorization: superToken})
                 .send(dataObj);
         });
         
@@ -117,6 +130,7 @@ describe('Reviews CRUD', () => {
 
                 const filmsReviewersSaved = filmData.concat(reviewerData).map(object => {
                     return request.post(`/api/${object.released ? 'films' : 'reviewers'}`)
+                        .set({Authorization: superToken})
                         .send(object);
                 });
 

@@ -2,7 +2,7 @@ const request = require('./request');
 const {assert} = require('chai');
 const mongoose = require('mongoose');
 
-describe.only('films router', () => {
+describe('films router', () => {
 
     let studios = null;
     let actors = null;
@@ -170,7 +170,7 @@ describe.only('films router', () => {
             });
         });
 
-        describe('get by id', () => {   // TODO: also get review stuff
+        describe('get by id', () => {
             it('retrieves the title, released date, studio name, cast( including actor\'s name and role', () => {
                 return request.post('/api/films')
                     .set({Authorization: superToken})

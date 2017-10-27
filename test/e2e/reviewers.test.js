@@ -5,6 +5,18 @@ const request = require('./request');
 describe('Reviewer CRUD', () => {
     let rawData = null;
     
+    let superToken = null;
+    beforeEach(async () => {
+        ({body: superToken} = await request.post('/api/auth/signup')
+            .send({
+                name: 'Magnus ver Magnusson',
+                roles: 'admin',
+                company: 'The Shadow Government',
+                email: 'Magnusson@Magnus.org',
+                password: '^%fyf^5f&tf&f6DR&fRF^%3S5ruJ0iN9J)OmU*hiM9VrC54@AA$zD'
+            }));
+    });
+    
     beforeEach(() => {
         mongoose.dropDatabase();
         rawData = [
@@ -23,15 +35,20 @@ describe('Reviewer CRUD', () => {
         it('returns reviewer with new id', () => {
             return request.post('/api/reviewers')
                 .send(rawData[0])
-                .then( res => assert.ok(res.body._id));
+                .set({Authorization: superToken})
+                .then( res => {
+                    assert.ok(res.body._id);
+                });
         });
     });
     describe('GET Reviewer', () => {
         it('returns all with no given id', () => {
             const saveAll = [
                 request.post('/api/reviewers')
+                    .set({Authorization: superToken})
                     .send(rawData[0]),
                 request.post('/api/reviewers')
+                    .set({Authorization: superToken})
                     .send(rawData[1])
             ];
 
@@ -52,6 +69,7 @@ describe('Reviewer CRUD', () => {
         });
         it('returns reviewer by id', () => {
             return request.post('/api/reviewers')
+                .set({Authorization: superToken})
                 .send(rawData[0])
                 .then(res => {
                     const saved = res.body;
@@ -91,8 +109,10 @@ describe('Reviewer CRUD', () => {
                     ];
                     const savedFilms = [
                         request.post('/api/films')
+                            .set({Authorization: superToken})
                             .send(filmData[0]),
                         request.post('/api/films')
+                            .set({Authorization: superToken})
                             .send(filmData[1])
                     ];
 
@@ -141,9 +161,11 @@ describe('Reviewer CRUD', () => {
     describe('DELETE Reviewer', () => {
         it('given a valid id returns true', () => {
             return request.post('/api/reviewers')
+                .set({Authorization: superToken})
                 .send(rawData[0])
                 .then( res => {
                     return request.del(`/api/reviewers/${res.body._id}`)
+                        .set({Authorization: superToken})
                         .then(({body: status}) => {
                             assert.deepEqual(status, {removed: true});
                         });
@@ -154,10 +176,12 @@ describe('Reviewer CRUD', () => {
     describe('PATCH', () => {
         it('replaces part of a reviewer document', () => {
             return request.post('/api/reviewers')
+                .set({Authorization: superToken})
                 .send(rawData[1])
                 .then(({body: saved}) => {
                     saved.company = 'company';
                     return request.patch(`/api/reviewers/${saved._id}`)
+                        .set({Authorization: superToken})
                         .send({company: 'company'})
                         .then(({body: updated}) => {
                             assert.deepEqual(saved, updated);
