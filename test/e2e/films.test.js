@@ -6,10 +6,6 @@ describe.only('films API', () => {
 
     let studio = {
         name: 'Warner',
-        address: {
-            city: 'Hollywood',
-            state: 'CA'
-        }
     };
 
     let leonardoDiCaprio = {
@@ -35,6 +31,7 @@ describe.only('films API', () => {
             .send(studio)
             .then(res => res.body)
             .then(saved => {
+                delete saved.__v;
                 studio = saved;
             })
             .then(() => {
@@ -205,8 +202,9 @@ describe.only('films API', () => {
                         savedData = saved.map(save => {
                             return {
                                 _id: save._id,
+                                released: save.released,
                                 title: save.title,
-                                studio: 'Warner',
+                                studio: studio,
                             };
                         });
                         savedData[0].averageRating = 2;
