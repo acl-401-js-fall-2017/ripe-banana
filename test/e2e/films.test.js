@@ -67,6 +67,57 @@ describe.only('films API', () => {
                             studio: studio._id,
                             released: 2002
                         };
+                        juno2 = {
+                            title: 'juno2',
+                            studio: studio._id,
+                            released: 2005
+                        };
+                        juno3 = {
+                            title: 'juno3',
+                            studio: studio._id,
+                            released: 2023
+                        };
+                        spiderman = {
+                            title: 'spiderman',
+                            studio: studio._id,
+                            released: 2000,
+                        };
+                        spiderman2 = {
+                            title: 'spiderman',
+                            studio: studio._id,
+                            released: 2002,
+                        };
+                        batman = {
+                            title: 'batman',
+                            studio: studio._id,
+                            released: 2000,
+                        };
+                        batman2 = {
+                            title: 'batman2',
+                            studio: studio._id,
+                            released: 2010,
+                        };
+                        batman3 = {
+                            title: 'batman',
+                            studio: studio._id,
+                            released: 2000,
+                        };
+                        superman = {
+                            title: 'superman',
+                            studio: studio._id,
+                            released: 2000,
+                        };
+                        superman2 = {
+                            title: 'superman2',
+                            studio: studio._id,
+                            released: 2000,
+                        };
+                        superman3 = {
+                            title: 'superman',
+                            studio: studio._id,
+                            released: 2000,
+                        };
+
                     });
             });
     });
@@ -168,6 +219,74 @@ describe.only('films API', () => {
                     });
 
             });
+    });
+
+    it('should get the top films limit 10', () =>{
+       let films = [
+           juno,
+           juno2, 
+           juno3, 
+           spiderman, 
+           spiderman2, 
+           batman,
+           batman2,
+           batman3, 
+           superman,
+           superman2, 
+           superman3,
+           titanic
+        ];
+       
+       const savedFilms = films.map( review => {
+        request.post('/api/films')
+            .send(review)
+            .then(res => res.body)
+        })
+
+        return Promise.all(saveFilms)
+            .then(savedFilms =>{
+                savedFilms = savedFilms.sort((a, b) => a._id < b._id);
+                let reviewSet1 = [
+                    junoReview1, junoReview2, junoReview3,
+                ];
+                let reviewSet2 = [
+                    titanicReview1, titanicReview2, titanicReview3
+                ];
+                let reviewSet3 = [
+                    titanicReview1, junoReview1, titanicReview2
+                ];
+                
+
+                const savedReviews = savedFilms.map( (film, index) => {
+                        if( index < 3 ) {
+                            reviewSet1.map( review => {
+                                review.film = film._id;
+                                return request.post('/api/reviews')
+                                    .send(review)
+                                    .then(res => res.body)
+                            });
+                        } else if ( index < 6 ) {
+                            reviewSet2.map( review => {
+                                review.film = film._id;
+                                return request.post('/api/r1eviews')
+                                    .send(review)
+                                    .then(res => res.body);
+                                });
+                                
+                        } else {
+                        reviewSet3.map( review => {
+                            review.film = film._id;
+                            return request.post('/api/reviews')
+                                .send(review)
+                                .then(res => res.body);
+                        })
+                    };                      
+                });
+
+                
+            })
+    
+
     });
 
     it('GETS all films', () => {
