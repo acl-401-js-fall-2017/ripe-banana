@@ -1,8 +1,10 @@
 const {assert} = require('chai');
 const mongoose = require('mongoose').connection;
 const request = require('./request');
+const tokenService = require('../../lib/utils/token-service');
+const User = require('../../lib/models/User');
 
-describe('Reviews CRUD', () => {
+describe.only('Reviews CRUD', () => {
     let studios = null;
     let actors = null;
     let filmData = null;
@@ -12,6 +14,7 @@ describe('Reviews CRUD', () => {
     let reviewData = null;
     
     let superToken = null;
+    let superUser = null;
     beforeEach(async () => {
         ({body: superToken} = await request.post('/api/auth/signup')
             .send({
@@ -21,6 +24,8 @@ describe('Reviews CRUD', () => {
                 email: 'Magnusson@Magnus.org',
                 password: '^%fyf^5f&tf&f6DR&fRF^%3S5ruJ0iN9J)OmU*hiM9VrC54@AA$zD'
             }));
+        let {id} = await tokenService.verify(superToken);
+        superUser = await User.findById(id);
     });
 
     beforeEach(() => {
@@ -138,6 +143,7 @@ describe('Reviews CRUD', () => {
                     .then(frRes => {
                         films = frRes.slice(0, filmData.length).map(r => r.body);
                         reviewers = frRes.slice(-reviewerData.length).map(r => r.body);
+                        
                         reviewData = [
                             {
                                 rating: 3,
@@ -159,9 +165,11 @@ describe('Reviews CRUD', () => {
     describe('Reviews POST', () => {
         it('Post a review and return with id', () => {
             return request.post('/api/reviews')
+                .set({Authorization: superToken})
                 .send(reviewData[1])
                 .then(({body: revRes}) => {
                     assert.ok(revRes._id);
+                    assert.equal(revRes.reviewer, superUser._id);
                 });
         });
     });
