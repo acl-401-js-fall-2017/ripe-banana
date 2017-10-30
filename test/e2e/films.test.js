@@ -4,7 +4,6 @@ const mongoose = require('mongoose');
 const tokenService = require('../../lib/utils/token-service');
 
 let superToken = null;
-let reviewerId = null;
 beforeEach(async () => {
     ({body: superToken} = await request.post('/api/auth/signup')
         .send({
@@ -14,7 +13,6 @@ beforeEach(async () => {
             email: 'Magnusson@Magnus.org',
             password: '^%fyf^5f&tf&f6DR&fRF^%3S5ruJ0iN9J)OmU*hiM9VrC54@AA$zD'
         }));
-    ({id: reviewerId} = await tokenService.verify(superToken));        
 });
 
 describe('films router', () => {
@@ -174,7 +172,7 @@ describe('films router', () => {
         });
 
         describe('get by id', () => {
-            it.only('retrieves the title, released date, studio name, cast( including actor\'s name and role', () => {
+            it('retrieves the title, released date, studio name, cast( including actor\'s name and role', () => {
                 return request.post('/api/films')
                     .set({Authorization: superToken})
                     .send(filmData[1])
