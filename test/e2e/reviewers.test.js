@@ -1,11 +1,13 @@
 const {assert} = require('chai');
 const mongoose = require('mongoose').connection;
 const request = require('./request');
+const tokenService = require('../../lib/utils/token-service');
 
 describe('Reviewer CRUD', () => {
     let rawData = null;
     
     let superToken = null;
+    let reviewerId = null;
     beforeEach(async () => {
         ({body: superToken} = await request.post('/api/auth/signup')
             .send({
@@ -15,6 +17,7 @@ describe('Reviewer CRUD', () => {
                 email: 'Magnusson@Magnus.org',
                 password: '^%fyf^5f&tf&f6DR&fRF^%3S5ruJ0iN9J)OmU*hiM9VrC54@AA$zD'
             }));
+        ({id: reviewerId} = await tokenService.verify(superToken));
     });
     
     beforeEach(() => {
@@ -67,96 +70,115 @@ describe('Reviewer CRUD', () => {
                         });
                 });
         });
-        it('returns reviewer by id', () => {
-            return request.post('/api/reviewers')
-                .set({Authorization: superToken})
-                .send(rawData[0])
-                .then(res => {
-                    const saved = res.body;
-                    delete saved.__v;
-                    const tokenId = '59ed81a77d24225ec86bec2c';
-                    const filmData = [
-                        {
-                            title: 'Halloween',
-                            studio: tokenId,
-                            released: 2000,
-                            cast: [
-                                {
-                                    part: 'damsel in distress',
-                                    actor:tokenId
-                                },
-                                {
-                                    part: 'lead',
-                                    actor:tokenId
-                                }
-                            ]
-                        },
-                        {
-                            title: 'Blade Runner',
-                            studio: tokenId,
-                            released: 2017,
-                            cast: [
-                                {
-                                    part: 'android',
-                                    actor:tokenId
-                                },
-                                {
-                                    part: 'human',
-                                    actor:tokenId
-                                }
-                            ]
-                        }
-                    ];
-                    const savedFilms = [
-                        request.post('/api/films')
-                            .set({Authorization: superToken})
-                            .send(filmData[0]),
-                        request.post('/api/films')
-                            .set({Authorization: superToken})
-                            .send(filmData[1])
-                    ];
+        it.only('returns reviewer by id', () => {
+            
+            return request.post('/api/auth/signup')
+                .send({
+                    name: 'Magnus ver Magnusson',
+                    roles: 'admin',
+                    company: 'The Shadow Government',
+                    email: 'Magnusson@Magnus.org',
+                    password: '^%fyf^5f&tf&f6DR&fRF^%3S5ruJ0iN9J)OmU*hiM9VrC54@AA$zD'
+                })
+                .then(({body:superToken}) => {
+                    return tokenService
+                        .verify(superToken)
+                        .then(verification => {
+                            reviewerId = verification.id;
 
-                    return Promise.all(savedFilms)
-                        .then(filmRes => {
-                            const films = filmRes.map(r => r.body);
-
-                            const reviewData = [
+                            const tokenId = '59ed81a77d24225ec86bec2c';
+                            const filmData = [
                                 {
-                                    rating: 4,
-                                    reviewer: saved._id,
-                                    review: 'fbdlfkdsjfsdfkcmncmxncmxnmcnmxcnc',
-                                    film: films[0]._id
+                                    title: 'Halloween',
+                                    studio: tokenId,
+                                    released: 2000,
+                                    cast: [
+                                        {
+                                            part: 'damsel in distress',
+                                            actor:tokenId
+                                        },
+                                        {
+                                            part: 'lead',
+                                            actor:tokenId
+                                        }
+                                    ]
                                 },
                                 {
-                                    rating: 2,
-                                    reviewer: saved._id,
-                                    review: 'fasasasasasaasaasasasasasassa',
-                                    film: films[1]._id
+                                    title: 'Blade Runner',
+                                    studio: tokenId,
+                                    released: 2017,
+                                    cast: [
+                                        {
+                                            part: 'android',
+                                            actor:tokenId
+                                        },
+                                        {
+                                            part: 'human',
+                                            actor:tokenId
+                                        }
+                                    ]
                                 }
                             ];
-
-                            return Promise.all(reviewData.map(r => request.post('/api/reviews').send(r)))
-                                .then(() => {
-                                    saved.reviews = [
+                            const savedFilms = [
+                                request.post('/api/films')
+                                    .set({Authorization: superToken})
+                                    .send(filmData[0]),
+                                request.post('/api/films')
+                                    .set({Authorization: superToken})
+                                    .send(filmData[1])
+                            ];
+                
+                            return Promise.all(savedFilms)
+                                .then(filmRes => {
+                                    const films = filmRes.map(r => r.body);
+                
+                                    const reviewData = [
                                         {
                                             rating: 4,
+                                            reviewer: reviewerId,
                                             review: 'fbdlfkdsjfsdfkcmncmxncmxnmcnmxcnc',
-                                            film: films[0].title
+                                            film: films[0]._id
                                         },
                                         {
                                             rating: 2,
+                                            reviewer: reviewerId,
                                             review: 'fasasasasasaasaasasasasasassa',
-                                            film: films[1].title
+                                            film: films[1]._id
                                         }
                                     ];
+                
+                                    return Promise.all(reviewData.map(r => request.post('/api/reviews').set({Authorization: superToken}).send(r)))
+                                        .then(() => {
+                                            const reviews = [
+                                                {
+                                                    rating: 4,
+                                                    review: 'fbdlfkdsjfsdfkcmncmxncmxnmcnmxcnc',
+                                                    film: films[0].title
+                                                },
+                                                {
+                                                    rating: 2,
+                                                    review: 'fasasasasasaasaasasasasasassa',
+                                                    film: films[1].title
+                                                }
+                                            ];
+                
+                                            return request.get(`/api/reviewers/${reviewerId}`)
+                                                .then(getRes => {
+                                                    const expected ={
+                                                        name: 'Magnus ver Magnusson',
+                                                        _id: reviewerId,
+                                                        company: 'The Shadow Government',
+                                                        reviews
+                                                    };
 
-                                    return request.get(`/api/reviewers/${saved._id}`)
-                                        .then(getRes => assert.deepEqual(getRes.body, saved));     
-                                });
+                                                    assert.deepEqual(getRes.body, expected);
+                                                });     
+                                        });
+                                });  
                         });
-                        
                 });
         });
+
     });
     describe('DELETE Reviewer', () => {
         it('given a valid id returns true', () => {
