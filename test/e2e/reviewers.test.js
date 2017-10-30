@@ -70,7 +70,7 @@ describe('Reviewer CRUD', () => {
                         });
                 });
         });
-        it.only('returns reviewer by id', () => {
+        it('returns reviewer by id', () => {
             
             return request.post('/api/auth/signup')
                 .send({

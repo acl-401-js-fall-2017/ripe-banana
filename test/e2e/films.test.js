@@ -1,24 +1,27 @@
 const request = require('./request');
 const {assert} = require('chai');
 const mongoose = require('mongoose');
+const tokenService = require('../../lib/utils/token-service');
+
+let superToken = null;
+let reviewerId = null;
+beforeEach(async () => {
+    ({body: superToken} = await request.post('/api/auth/signup')
+        .send({
+            name: 'Magnus ver Magnusson',
+            roles: 'admin',
+            company: 'The Shadow Government',
+            email: 'Magnusson@Magnus.org',
+            password: '^%fyf^5f&tf&f6DR&fRF^%3S5ruJ0iN9J)OmU*hiM9VrC54@AA$zD'
+        }));
+    ({id: reviewerId} = await tokenService.verify(superToken));        
+});
 
 describe('films router', () => {
 
     let studios = null;
     let actors = null;
     let filmData = null;
-
-    let superToken = null;
-    beforeEach(async () => {
-        ({body: superToken} = await request.post('/api/auth/signup')
-            .send({
-                name: 'Magnus ver Magnusson',
-                roles: 'admin',
-                company: 'The Shadow Government',
-                email: 'Magnusson@Magnus.org',
-                password: '^%fyf^5f&tf&f6DR&fRF^%3S5ruJ0iN9J)OmU*hiM9VrC54@AA$zD'
-            }));
-    });
 
     beforeEach(() => {
         mongoose.connection.dropDatabase();
@@ -171,7 +174,7 @@ describe('films router', () => {
         });
 
         describe('get by id', () => {
-            it('retrieves the title, released date, studio name, cast( including actor\'s name and role', () => {
+            it.only('retrieves the title, released date, studio name, cast( including actor\'s name and role', () => {
                 return request.post('/api/films')
                     .set({Authorization: superToken})
                     .send(filmData[1])
@@ -186,74 +189,67 @@ describe('films router', () => {
                                 if(castMember.actor === actor._id) castMember.actor = actor.name;
                             });
                         });
-                        const reviewerData = [
-                            {
-                                name: 'Ted',
-                                company: 'GitHub'
-                            },
-                            {
-                                name: 'Mosbee',
-                                company: 'Starbucks'
-                            }
-                        ];
-                        const reviewerDataSaved = [
-                            request.post('/api/reviewers')
-                                .set({Authorization: superToken})
-                                .send(reviewerData[0]),
-                            request.post('/api/reviewers')
-                                .set({Authorization: superToken})
-                                .send(reviewerData[1])
-                        ];
-                        
-                        return Promise.all(reviewerDataSaved)
-                            .then(reviewerRes => {
-                                const reviewers = reviewerRes.map(r => r.body);
-                                const reviewData = [
-                                    {
-                                        rating: 4,
-                                        reviewer: reviewers[0]._id,
-                                        review: 'fbdlfkdsjfsdfkcmncmxncmxnmcnmxcnc',
-                                        film: saved._id
-                                    },
-                                    {
-                                        rating: 2,
-                                        reviewer: reviewers[1]._id,
-                                        review: 'fasasasasasaasaasasasasasassa',
-                                        film: saved._id
-                                    }
-                                ];
-                                const reviewSend = [
-                                    request.post('/api/reviews')
-                                        .set({Authorization: superToken})
-                                        .send(reviewData[0]),
-                                    request.post('/api/reviews')
-                                        .set({Authorization: superToken})
-                                        .send(reviewData[1])
-                                ];
+        
+                        return request.post('/api/auth/signup')
+                            .send({
+                                name: 'Magnus ver Magnusson',
+                                roles: 'admin',
+                                company: 'The Shadow Government',
+                                email: 'Magnusson@Magnus.org',
+                                password: '^%fyf^5f&tf&f6DR&fRF^%3S5ruJ0iN9J)OmU*hiM9VrC54@AA$zD'
+                            })
+                            .then(({body: superToken}) => {
 
-                                return Promise.all(reviewSend)
-                                    .then(() => {
-                                        saved.reviews = [
+                                return tokenService.verify(superToken)
+                                    .then(({id: reviewerId}) => {
+
+                                        const reviewData = [
                                             {
                                                 rating: 4,
-                                                reviewer: 'Ted',
-                                                review: 'fbdlfkdsjfsdfkcmncmxncmxnmcnmxcnc'
+                                                reviewer: reviewerId,
+                                                review: 'fbdlfkdsjfsdfkcmncmxncmxnmcnmxcnc',
+                                                film: saved._id
                                             },
                                             {
                                                 rating: 2,
-                                                reviewer: 'Mosbee',
-                                                review: 'fasasasasasaasaasasasasasassa'
+                                                reviewer: reviewerId,
+                                                review: 'fasasasasasaasaasasasasasassa',
+                                                film: saved._id
                                             }
                                         ];
-                                        return request.get(`/api/films/${saved._id}`)
-                                            .then(getRes => {
-                                                assert.deepEqual(saved, getRes.body);
-
+                                        const reviewSend = [
+                                            request.post('/api/reviews')
+                                                .set({Authorization: superToken})
+                                                .send(reviewData[0]),
+                                            request.post('/api/reviews')
+                                                .set({Authorization: superToken})
+                                                .send(reviewData[1])
+                                        ];
+        
+                
+                                        return Promise.all(reviewSend)
+                                            .then(() => {
+                                                saved.reviews = [
+                                                    {
+                                                        rating: 4,
+                                                        reviewer: 'Magnus ver Magnusson',
+                                                        review: 'fbdlfkdsjfsdfkcmncmxncmxnmcnmxcnc'
+                                                    },
+                                                    {
+                                                        rating: 2,
+                                                        reviewer: 'Magnus ver Magnusson',
+                                                        review: 'fasasasasasaasaasasasasasassa'
+                                                    }
+                                                ];
+                    
+                                                return request.get(`/api/films/${saved._id}`)
+                                                    .then(getRes => {
+                                                        assert.deepEqual(saved, getRes.body);
+                    
+                                                    });
                                             });
-                                    });
-
+                                    });     
                             });
-
                     });
             });
         });
