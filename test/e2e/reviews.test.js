@@ -176,8 +176,8 @@ describe.only('Reviews CRUD', () => {
     describe('Reviews GET', () => {
         it('Gets all(max 100) reviews with rating, review, and film name', () => {
             const saveReviews = [
-                request.post('/api/reviews').send(reviewData[0]),
-                request.post('/api/reviews').send(reviewData[1])
+                request.post('/api/reviews').set({Authorization: superToken}).send(reviewData[0]),
+                request.post('/api/reviews').set({Authorization: superToken}).send(reviewData[1])
             ];
             return Promise.all(saveReviews)
                 .then(revResArr => {
@@ -204,11 +204,13 @@ describe.only('Reviews CRUD', () => {
     describe('Reviews PATCH', () => {
         it('Patch a review and returns it', () => {
             return request.post('/api/reviews')
+                .set({Authorization: superToken})
                 .send(reviewData[0])
                 .then(({body: revRes}) => {
                     assert.ok(revRes._id);
                     revRes.rating = 2;
                     return request.patch(`/api/reviews/${revRes._id}`)
+                        .set({Authorization: superToken})
                         .send({rating: 2})
                         .then(({body: updateRes}) => {
                             assert.deepEqual(revRes, updateRes);
