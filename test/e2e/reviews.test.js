@@ -4,7 +4,7 @@ const request = require('./request');
 const tokenService = require('../../lib/utils/token-service');
 const User = require('../../lib/models/User');
 
-describe.only('Reviews CRUD', () => {
+describe('Reviews CRUD', () => {
     let studios = null;
     let actors = null;
     let filmData = null;

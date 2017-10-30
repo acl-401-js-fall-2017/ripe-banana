@@ -164,6 +164,15 @@ describe('studio CRUD', () => {
                     assert.ok(res.body._id);
                 });
         });
+        
+        it('does not return the saved object with _id if not admin', () => {
+            return request.post('/api/studios')
+                .set({Authorization: token})
+                .send(tw)
+                .catch(err => {
+                    assert.ok(err.status, 403);
+                });
+        });
     });
 
     describe('delete (ADMIN ONLY ROUTE)', () => {
