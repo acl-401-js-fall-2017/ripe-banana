@@ -21,6 +21,16 @@ describe.only('films API', () => {
     let titanic = null;
     let juno = null;
     let actorsWithID = null;
+    let juno2 = null;
+    let juno3 = null;
+    let spiderman =null;
+    let spiderman2 = null;
+    let batman = null;
+    let batman2 = null;
+    let batman3 = null;
+    let superman = null;
+    let superman2 = null;
+    let superman3 = null;
 
     beforeEach(() => {
         mongoose.connection.dropDatabase();
@@ -182,6 +192,7 @@ describe.only('films API', () => {
                     reviewer: kateTaylor._id,
                     reviewText: 'this movie is great',
                 };
+                return;
             });
             
     });
@@ -221,30 +232,30 @@ describe.only('films API', () => {
             });
     });
 
-    it('should get the top films limit 10', () =>{
-       let films = [
-           juno,
-           juno2, 
-           juno3, 
-           spiderman, 
-           spiderman2, 
-           batman,
-           batman2,
-           batman3, 
-           superman,
-           superman2, 
-           superman3,
-           titanic
+    it('should get the top films limit 10', () => {
+        let films = [
+            juno,
+            juno2,
+            juno3,
+            spiderman,
+            spiderman2,
+            batman,
+            batman2,
+            batman3,
+            superman,
+            superman2,
+            superman3,
+            titanic
         ];
-       
-       const savedFilms = films.map( review => {
-        request.post('/api/films')
-            .send(review)
-            .then(res => res.body)
-        })
+
+        const saveFilms = films.map(film => {
+            return request.post('/api/films')
+                .send(film)
+                .then(res => res.body);
+        });
 
         return Promise.all(saveFilms)
-            .then(savedFilms =>{
+            .then(savedFilms => {
                 savedFilms = savedFilms.sort((a, b) => a._id < b._id);
                 let reviewSet1 = [
                     junoReview1, junoReview2, junoReview3,
@@ -255,37 +266,40 @@ describe.only('films API', () => {
                 let reviewSet3 = [
                     titanicReview1, junoReview1, titanicReview2
                 ];
-                
-
-                const savedReviews = savedFilms.map( (film, index) => {
-                        if( index < 3 ) {
-                            reviewSet1.map( review => {
-                                review.film = film._id;
-                                return request.post('/api/reviews')
-                                    .send(review)
-                                    .then(res => res.body)
-                            });
-                        } else if ( index < 6 ) {
-                            reviewSet2.map( review => {
-                                review.film = film._id;
-                                return request.post('/api/r1eviews')
-                                    .send(review)
-                                    .then(res => res.body);
-                                });
-                                
-                        } else {
-                        reviewSet3.map( review => {
+                const savedReviews = savedFilms.map((film, index) => {
+                    if (index < 3) {
+                        reviewSet1.map(review => {
                             review.film = film._id;
                             return request.post('/api/reviews')
                                 .send(review)
                                 .then(res => res.body);
-                        })
-                    };                      
-                });
+                        });
+                    } else if (index < 6) {
+                        reviewSet2.map(review => {
+                            review.film = film._id;
+                            return request.post('/api/reviews')
+                                .send(review)
+                                .then(res => res.body);
+                        });
 
-                
-            })
-    
+                    } else {
+                        reviewSet3.map(review => {
+                            review.film = film._id;
+                            return request.post('/api/reviews')
+                                .send(review)
+                                .then(res => res.body);
+                        });
+                    }
+                });
+                return Promise.all(savedReviews)    
+                    .then(()=>{
+                        return request.get('api/films/top')
+                            .then(res => {
+                                assert.deepEqual(res.body, 444);
+                            });
+                    });
+            });
+
 
     });
 
@@ -315,9 +329,9 @@ describe.only('films API', () => {
                         .send(review)
                         .then(res => res.body);
                 });
-                
+
                 return Promise.all(savedReviews)
-                    .then(()=>{
+                    .then(() => {
                         savedData = saved.map(save => {
                             return {
                                 _id: save._id,
@@ -337,7 +351,7 @@ describe.only('films API', () => {
                     });
             });
     });
-                
+
     it('updates a film', () => {
 
         let savedFilm = null;
@@ -369,12 +383,12 @@ describe.only('films API', () => {
                 return request.get(`/api/films/${film._id}`);
             })
             .then(
-                () => {
-                    throw new Error('Unexpected successful response');
-                },
-                err => {
-                    assert.equal(err.status, 404);
-                }
+            () => {
+                throw new Error('Unexpected successful response');
+            },
+            err => {
+                assert.equal(err.status, 404);
+            }
             );
     });
 });
