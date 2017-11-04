@@ -309,7 +309,7 @@ describe.only('films API', () => {
                         console.log('I am manually created top ten length', topTenCheck.length);
                         return request.get('/api/films/top')
                             .then(res => {
-                                assert.deepEqual(res.body, 444);
+                                assert.deepEqual(res.body, topTenCheck);
                             });
                     });
             });
