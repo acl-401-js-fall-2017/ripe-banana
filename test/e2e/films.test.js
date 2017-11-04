@@ -291,9 +291,23 @@ describe.only('films API', () => {
                         });
                     }
                 });
-                return Promise.all(savedReviews)    
-                    .then(()=>{
-                        return request.get('api/films/top')
+                return Promise.all(savedReviews)  
+                    .then(()=> {
+                        return request.get('/api/films')
+                            .then(films => {
+                                films = films.body;
+                                console.log('I am films length what am i? ',films.length);
+                                films = films.sort((a, b) => a.averageRating < b.averageRating);
+                                let topTen = [];
+                                for(let i = 0; i < 10; i++ ){
+                                    topTen.push(films[i]);
+                                }
+                                return topTen;
+                            }); 
+                    })  
+                    .then( topTenCheck =>{
+                        console.log('I am manually created top ten length', topTenCheck.length);
+                        return request.get('/api/films/top')
                             .then(res => {
                                 assert.deepEqual(res.body, 444);
                             });
@@ -383,12 +397,12 @@ describe.only('films API', () => {
                 return request.get(`/api/films/${film._id}`);
             })
             .then(
-            () => {
-                throw new Error('Unexpected successful response');
-            },
-            err => {
-                assert.equal(err.status, 404);
-            }
+                () => {
+                    throw new Error('Unexpected successful response');
+                },
+                err => {
+                    assert.equal(err.status, 404);
+                }
             );
     });
 });
