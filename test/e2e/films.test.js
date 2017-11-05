@@ -2,7 +2,7 @@ const assert = require('chai').assert;
 const mongoose = require('mongoose');
 const request = require('./request');
 
-describe.only('films API', () => {
+describe('films API', () => {
 
     let studio = {
         name: 'Warner',

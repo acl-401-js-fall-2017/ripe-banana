@@ -59,7 +59,10 @@ describe('studios API', () => {
                 return request.get('/api/studios');
             })
             .then(res =>{
-                assert.deepEqual(res.body, savedNames);
+                savedNames = savedNames.sort((a, b) => a._id < b._id);
+                let response = res.body.sort((a, b) => a._id < b._id);
+
+                assert.deepEqual(response, savedNames);
             });
     });
 
