@@ -19,7 +19,9 @@ describe('actors API', () => {
     };
     
     let studio = null;
-    let film = null; 
+    let film = null;
+    //let film2 = null;
+    //let film3 = null;
     beforeEach(()=> {
         return request.post('/api/studios')
             .send(warner)
@@ -27,11 +29,12 @@ describe('actors API', () => {
     });
 
     beforeEach(()=>{
-        film = {
-            title: 'Dumb and Dumberer',
-            studio: studio._id,
-            released: 1998,
-        };
+        film =
+            {
+                title: 'Dumb and Dumberer',
+                studio: studio._id,
+                released: 1998,
+            };
         return request.post('/api/films')
             .send(film)
             .then(res => film = res.body);
@@ -65,7 +68,32 @@ describe('actors API', () => {
                         name: save.name
                     }; 
                 });
-                return request.get('/api/actors');
+                let filmz = [{
+                    title: 'Top Gun',
+                    studio: studio._id,
+                    released: 1992,
+                    cast:[{part: 'lead', actor: savedNames[0]},{part: 'support', actor: savedNames[1]}]
+                },
+                {
+                    title: 'Top Gun2',
+                    studio: studio._id,
+                    released: 2018,
+                    cast:[{part: 'lead', actor: savedNames[0]},{part: 'support', actor: savedNames[1]}]
+                },
+                {
+                    title: 'Harry Potter',
+                    studio: studio._id,
+                    released: 2001,
+                    cast:[{part: 'lead', actor: savedNames[1]}]
+                }];
+                return Promise.all(filmz.map( each => {
+                    return request.post('/api/films')
+                        .send(each)
+                        .then(res => res.body)
+                }))
+                .then(()=>{
+                    return request.get('/api/actors');
+                })
             })
             .then(res =>{
                 assert.deepEqual(res.body, savedNames);
