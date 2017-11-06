@@ -89,13 +89,17 @@ describe('actors API', () => {
                 return Promise.all(filmz.map( each => {
                     return request.post('/api/films')
                         .send(each)
-                        .then(res => res.body)
+                        .then(res => res.body);
                 }))
-                .then(()=>{
-                    return request.get('/api/actors');
-                })
+                    .then(()=>{
+                        return request.get('/api/actors');
+                    });
             })
             .then(res =>{
+                savedNames[0].movieCount = 2;
+                savedNames[1].movieCount = 3;
+                console.log('I am the actors', savedNames);
+                console.log('i am the response', res.body);
                 assert.deepEqual(res.body, savedNames);
             });
     });
