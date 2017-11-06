@@ -51,7 +51,8 @@ describe('actors API', () => {
             });
     });
 
-    it('Gets all actors', () =>{
+    it
+    ('Gets all actors', () =>{
         const saves = [kevin, amy].map(actor =>{
             return request.post('/api/actors')
                 .send(actor)
@@ -100,7 +101,9 @@ describe('actors API', () => {
                 savedNames[1].movieCount = 3;
                 console.log('I am the actors', savedNames);
                 console.log('i am the response', res.body);
-                assert.deepEqual(res.body, savedNames);
+                let allActors = res.body.sort((a, b) => a._id < b._id);
+                savedNames = savedNames.sort((a, b) => a._id < b._id);
+                assert.deepEqual(allActors, savedNames);
             });
     });
 
