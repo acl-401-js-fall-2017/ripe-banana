@@ -55,7 +55,7 @@ describe('reviewer API', () => {
             });
     });
 
-    it.only('Gets all reviewers', () => {
+    it('Gets all reviewers', () => {
         const saves = [jamesBerardinelli, kateTaylor].map(reviewer => {
             return request.post('/api/reviewers')
                 .send(reviewer)
@@ -69,7 +69,8 @@ describe('reviewer API', () => {
                 savedData = saved.map(save => {
                     return {
                         _id: save._id,
-                        name: save.name
+                        name: save.name,
+                        company: save.company
                     };
                 });
                 let reviews = [
@@ -110,18 +111,22 @@ describe('reviewer API', () => {
                         film: film._id
                     }
                 ];
+                reviews = reviews.map( review =>{
+                    return request.post('/api/reviews')
+                        .send(review)
+                        .then(res => res.body);
+                });
                 return Promise.all(reviews)
-                    .then(savedreviews => {
+                    .then(() => {
                         savedData[0].countOfReviews = 3;
-                        savedData[0].averageReview = 3;
+                        savedData[0].averageReview = 2;
+                        savedData[1].averageReview = 3;
                         savedData[1].countOfReviews = 3;
-                        savedData[1].averageReview = 2;
                         return request.get('/api/reviewers');
                     });
             })
             .then(res => {
                 let sortedSavedData = savedData.sort((a,b) => a._id < b._id);
-                console.log('I am the check data sorted', sortedSavedData);
                 assert.deepEqual(res.body, sortedSavedData);
             });
     });
