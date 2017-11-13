@@ -180,11 +180,13 @@ describe('films router', () => {
                         const reviewerData = [
                             {
                                 name: 'Ted',
-                                company: 'GitHub'
+                                company: 'GitHub',
+                                email: 'teddy@bear.com'
                             },
                             {
                                 name: 'Mosbee',
-                                company: 'Starbucks'
+                                company: 'Starbucks',
+                                email: 'Mosbee@legendary.com'
                             }
                         ];
                         const reviewerDataSaved = [

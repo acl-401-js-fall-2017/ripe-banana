@@ -6,7 +6,8 @@ describe('Reviewer model', () => {
 
     beforeEach(() => rawData = {
         name: 'Mel',
-        company: 'film blog of mel'
+        company: 'film blog of mel',
+        email: 'mel@crazy.com'
     });
 
     it('valid model', () => {
