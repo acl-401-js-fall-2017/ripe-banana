@@ -6,10 +6,6 @@ describe('films API', () => {
 
     let studio = {
         name: 'Warner',
-        address: {
-            city: 'Hollywood',
-            state: 'CA'
-        }
     };
 
     let leonardoDiCaprio = {
@@ -25,14 +21,27 @@ describe('films API', () => {
     let titanic = null;
     let juno = null;
     let actorsWithID = null;
+    let juno2 = null;
+    let juno3 = null;
+    let spiderman =null;
+    let spiderman2 = null;
+    let batman = null;
+    let batman2 = null;
+    let batman3 = null;
+    let superman = null;
+    let superman2 = null;
+    let superman3 = null;
 
     beforeEach(() => {
         mongoose.connection.dropDatabase();
+
+        
 
         return request.post('/api/studios')
             .send(studio)
             .then(res => res.body)
             .then(saved => {
+                delete saved.__v;
                 studio = saved;
             })
             .then(() => {
@@ -68,8 +77,124 @@ describe('films API', () => {
                             studio: studio._id,
                             released: 2002
                         };
+                        juno2 = {
+                            title: 'juno2',
+                            studio: studio._id,
+                            released: 2005
+                        };
+                        juno3 = {
+                            title: 'juno3',
+                            studio: studio._id,
+                            released: 2023
+                        };
+                        spiderman = {
+                            title: 'spiderman',
+                            studio: studio._id,
+                            released: 2000,
+                        };
+                        spiderman2 = {
+                            title: 'spiderman',
+                            studio: studio._id,
+                            released: 2002,
+                        };
+                        batman = {
+                            title: 'batman',
+                            studio: studio._id,
+                            released: 2000,
+                        };
+                        batman2 = {
+                            title: 'batman2',
+                            studio: studio._id,
+                            released: 2010,
+                        };
+                        batman3 = {
+                            title: 'batman',
+                            studio: studio._id,
+                            released: 2000,
+                        };
+                        superman = {
+                            title: 'superman',
+                            studio: studio._id,
+                            released: 2000,
+                        };
+                        superman2 = {
+                            title: 'superman2',
+                            studio: studio._id,
+                            released: 2000,
+                        };
+                        superman3 = {
+                            title: 'superman',
+                            studio: studio._id,
+                            released: 2000,
+                        };
+
                     });
             });
+    });
+
+    let kateTaylor = null;
+    let jamesBerardinelli = null;
+    let junoReview1 = null;
+    let junoReview2 = null;
+    let junoReview3 = null;
+    let titanicReview1 = null;
+    let titanicReview2 = null;
+    let titanicReview3 = null;
+    
+    
+    
+
+    beforeEach(()=>{
+        return request.post('/api/reviewers')
+            .send({
+                name: 'Kate Taylor',
+                company: 'Globe and Mail'
+            })
+            .then(res => {
+                kateTaylor = res.body;
+            })
+            .then(()=>{
+                return request.post('/api/reviewers')
+                    .send({
+                        name: 'James Berardinelli',
+                        company: 'ReelViews'
+                    })
+                    .then(res => jamesBerardinelli = res.body);
+            })
+            .then(()=>{
+                junoReview1 = {
+                    rating: 2,
+                    reviewer: kateTaylor._id,
+                    reviewText: 'this movie sucks',
+                };
+                junoReview2 = {
+                    rating: 2,
+                    reviewer: jamesBerardinelli._id,
+                    reviewText: 'this movie is poo',
+                };
+                junoReview3 = {
+                    rating: 2,
+                    reviewer: kateTaylor._id,
+                    reviewText: 'this movie is great',
+                };
+                titanicReview1 = {
+                    rating: 2,
+                    reviewer: kateTaylor._id,
+                    reviewText: 'this movie sucks',
+                };
+                titanicReview2 = {
+                    rating: 5,
+                    reviewer: jamesBerardinelli._id,
+                    reviewText: 'this movie is poo',
+                };
+                titanicReview3 = {
+                    rating: 5,
+                    reviewer: kateTaylor._id,
+                    reviewText: 'this movie is great',
+                };
+                return;
+            });
+            
     });
 
 
@@ -107,6 +232,91 @@ describe('films API', () => {
             });
     });
 
+    it('should get the top films limit 10', () => {
+        let films = [
+            juno,
+            juno2,
+            juno3,
+            spiderman,
+            spiderman2,
+            batman,
+            batman2,
+            batman3,
+            superman,
+            superman2,
+            superman3,
+            titanic
+        ];
+
+        const saveFilms = films.map(film => {
+            return request.post('/api/films')
+                .send(film)
+                .then(res => res.body);
+        });
+
+        return Promise.all(saveFilms)
+            .then(savedFilms => {
+                savedFilms = savedFilms.sort((a, b) => a._id < b._id);
+                let reviewSet1 = [
+                    junoReview1, junoReview2, junoReview3,
+                ];
+                let reviewSet2 = [
+                    titanicReview1, titanicReview2, titanicReview3
+                ];
+                let reviewSet3 = [
+                    titanicReview1, junoReview1, titanicReview2
+                ];
+                const savedReviews = savedFilms.map((film, index) => {
+                    if (index < 3) {
+                        reviewSet1.map(review => {
+                            review.film = film._id;
+                            return request.post('/api/reviews')
+                                .send(review)
+                                .then(res => res.body);
+                        });
+                    } else if (index < 6) {
+                        reviewSet2.map(review => {
+                            review.film = film._id;
+                            return request.post('/api/reviews')
+                                .send(review)
+                                .then(res => res.body);
+                        });
+
+                    } else {
+                        reviewSet3.map(review => {
+                            review.film = film._id;
+                            return request.post('/api/reviews')
+                                .send(review)
+                                .then(res => res.body);
+                        });
+                    }
+                });
+                return Promise.all(savedReviews)  
+                    .then(()=> {
+                        return request.get('/api/films')
+                            .then(films => {
+                                films = films.body;
+                                console.log('I am films length what am i? ',films.length);
+                                films = films.sort((a, b) => a.averageRating < b.averageRating);
+                                let topTen = [];
+                                for(let i = 0; i < 10; i++ ){
+                                    topTen.push(films[i]);
+                                }
+                                return topTen;
+                            }); 
+                    })  
+                    .then( topTenCheck =>{
+                        console.log('I am manually created top ten length', topTenCheck.length);
+                        return request.get('/api/films/top')
+                            .then(res => {
+                                assert.deepEqual(res.body, topTenCheck);
+                            });
+                    });
+            });
+
+
+    });
+
     it('GETS all films', () => {
         const saves = [titanic, juno].map(savedFilm => {
             return request.post('/api/films')
@@ -117,20 +327,42 @@ describe('films API', () => {
         let saved = null;
         let savedData = null;
 
+
         return Promise.all(saves)
             .then(_saved => {
-                saved = _saved;
-                savedData = saved.map(save => {
-                    return {
-                        _id: save._id,
-                        title: save.title
-                    };
+                saved = _saved.sort((a, b) => a._id < b._id);
+                junoReview1.film = saved[0]._id;
+                junoReview2.film = saved[0]._id;
+                junoReview3.film = saved[0]._id;
+                titanicReview1.film = saved[1]._id;
+                titanicReview2.film = saved[1]._id;
+                titanicReview3.film = saved[1]._id;
+                const reviews = [junoReview1, junoReview2, junoReview3, titanicReview1, titanicReview2, titanicReview3];
+                const savedReviews = reviews.map(review => {
+                    return request.post('/api/reviews')
+                        .send(review)
+                        .then(res => res.body);
                 });
-                return request.get('/api/films');
-            })
-            .then(res => {
-                let sortedSavedData = savedData.sort((a, b) => a._id < b._id);
-                assert.deepEqual(res.body, sortedSavedData);
+
+                return Promise.all(savedReviews)
+                    .then(() => {
+                        savedData = saved.map(save => {
+                            return {
+                                _id: save._id,
+                                released: save.released,
+                                title: save.title,
+                                studio: studio,
+                            };
+                        });
+                        savedData[0].averageRating = 2;
+                        savedData[1].averageRating = 4;
+
+                        return request.get('/api/films');
+                    })
+                    .then(res => {
+                        let sortedSavedData = savedData.sort((a, b) => a._id < b._id);
+                        assert.deepEqual(res.body, sortedSavedData);
+                    });
             });
     });
 

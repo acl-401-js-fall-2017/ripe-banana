@@ -69,10 +69,61 @@ describe('reviewer API', () => {
                 savedData = saved.map(save => {
                     return {
                         _id: save._id,
-                        name: save.name
+                        name: save.name,
+                        company: save.company
                     };
                 });
-                return request.get('/api/reviewers');
+                let reviews = [
+                    {
+                        rating: 1,
+                        reviewer: savedData[0]._id,
+                        reviewText: 'this movie sucks',
+                        film: film._id
+                    },
+                    {
+                        rating: 1,
+                        reviewer: savedData[0]._id,
+                        reviewText: 'this movie sucks',
+                        film: film._id
+                    },
+                    {
+                        rating: 4,
+                        reviewer: savedData[0]._id,
+                        reviewText: 'this movie sucks',
+                        film: film._id
+                    },
+                    {
+                        rating: 5,
+                        reviewer: savedData[1]._id,
+                        reviewText: 'this movie sucks',
+                        film: film._id
+                    },
+                    {
+                        rating: 1,
+                        reviewer: savedData[1]._id,
+                        reviewText: 'this movie sucks',
+                        film: film._id
+                    },
+                    {
+                        rating: 3,
+                        reviewer: savedData[1]._id,
+                        reviewText: 'this movie sucks',
+                        film: film._id
+                    }
+                ];
+                reviews = reviews.map( review =>{
+                    return request.post('/api/reviews')
+                        .send(review)
+                        .then(res => res.body);
+                });
+                return Promise.all(reviews)
+                    .then(() => {
+                        savedData[0].countOfReviews = 3;
+                        savedData[0].averageReview = 2;
+                        savedData[1].averageReview = 3;
+                        savedData[1].countOfReviews = 3;
+                        return request.get('/api/reviewers');
+                    });
             })
             .then(res => {
                 let sortedSavedData = savedData.sort((a,b) => a._id < b._id);
